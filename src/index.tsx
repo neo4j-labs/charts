@@ -2,10 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import { Neo4jProvider } from 'use-neo4j';
+import { createDriver, Neo4jProvider } from 'use-neo4j';
 import appLogo from './logo.svg'
 import { version } from 'use-neo4j/package.json'
 import './index.css';
+import 'semantic-ui-css/semantic.min.css'
+
 
 const logo = () => {
   return (<div className="logo"><img src={appLogo} alt="logo" /></div>)
@@ -20,9 +22,11 @@ const footer = () => {
     </div>)
 }
 
+const driver = createDriver('neo4j', 'localhost', 7687, 'neo4j', 'neo')
+
 ReactDOM.render(
   <React.StrictMode>
-    <Neo4jProvider logo={logo()} footer={footer()}>
+    <Neo4jProvider driver={driver} logo={logo()} footer={footer()}>
       <App />
     </Neo4jProvider>
   </React.StrictMode>,
