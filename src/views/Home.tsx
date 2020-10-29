@@ -6,6 +6,11 @@ import { Container, Form, Header, Segment, Card, Label, Grid, Select, DropdownIt
 import { useReadCypher } from 'use-neo4j';
 import Loading from '../components/Loading'
 import useSchema, { LabelSchema, RelationshipTypeSchema } from '../hooks/use-schema';
+import Graph from '../components/Graph';
+import InitialNodeSelector from '../components/querybuilder/InitialNodeSelector';
+import Toolbar from '../components/querybuilder/Toolbar';
+import { useSelector, useDispatch } from 'react-redux'
+import { TreeState } from '../store';
 
 interface Filter {
     id: string;
@@ -14,196 +19,83 @@ interface Filter {
     value: any;
 }
 
-interface Property {
-    id: string;
-    key: string;
-}
-
-interface TreeRelationship {
-    id: string;
-    from: string;
-    to: string;
-    type: string;
-    direction: string;
-}
-
-interface TreeItem {
-    id: string;
-    parent?: string;
-    label: string;
-    // relationships: TreeItem[]
-}
-
-
-function TreeRelationship(props) {
-    const { id, from, types, labels, to, type, direction, nodes, relationships, addNode, addRelationship, } = props
-
-    const endNode = nodes.find(node => node.id === to)
-    // const endLabel = labels.find(label => label.label == endNode.label)
-
-    // console.log(endNode, endLabel);
-
-    const end = <TreeNode
-    key={endNode.id}
-    addNode={addNode}
-    addRelationship={addRelationship}
-    labels={labels}
-    types={types}
-    nodes={nodes}
-    relationships={relationships}
-    {...endNode}
-/>
-
-    return <Segment><pre>
-        { direction === 'in' && '<' }
-        -[{id}:{type}]-
-        { direction === 'out' && '>' }
-        ({to}:{endNode.label})
-
-        {end}
-    </pre>
-    </Segment>
-}
-
-
-function TreeNode(props) { //{ id, label, parent, nodes, addNode, addRelationship }) {
-    const { id, labels, types, nodes, relationships, label, addNode, addRelationship, addFilter } = props
-
-    const thisLabel = labels.find(node => node.label === label)
-
-    const nodeRelationships = relationships.filter(rel => rel.from == id)
-        .map(rel => <TreeRelationship
-            labels={labels}
-            types={types}
-            nodes={nodes}
-            relationships={relationships}
-
-            addNode={addNode}
-            addRelationship={addRelationship}
-            addFilter={addFilter}
-
-            key={rel.id}
-            {...rel}
-        />)
-
-
-    const handleRelationshipChange = (_, selected) => {
-        const [ type, direction, label ] = selected.value.split('||')
-
-        addRelationship(id, type, direction, label)
-    }
-
-    const options = thisLabel.relationships.map(rel => rel.labels.map(label => ({
-        value: [ rel.type, rel.direction, label ].join('||'),
-        key: `${rel.direction == 'in' ? '<' : ''}-[:${rel.type}]-${rel.direction == 'out' ? '>' : ''}(:${label})`,
-        text: `${rel.direction == 'in' ? '<' : ''}-[:${rel.type}]-${rel.direction == 'out' ? '>' : ''}(:${label})`,
-    })))
-        .reduce((acc, next) => acc.concat(next), [])
-
-
-    const relationshipSelect = thisLabel.relationships.length
-        ? <Select placeholder='Relationship' options={options} onChange={handleRelationshipChange} />
-        : null
-
-    const propertyOptions = Object.entries(thisLabel.properties).map(([key, value]) => ({
-        value: key,
-        key: key,
-        text: key,
-    }))
-
-
-    const filterSelect = propertyOptions.length
-        ? <Select placeholder='Property' options={propertyOptions} onChange={(e, a) => console.log(e, a)} />
-        : null
-
-    return <Segment>
-        <pre>({id}:{thisLabel.label})</pre>
-
-        {nodeRelationships}
-
-        <Segment>
-            <strong>Add Relationship:</strong> {relationshipSelect}
-        </Segment>
-
-        <Segment>
-            <strong>Add Filters:</strong> {filterSelect}
-        </Segment>
-    </Segment>
-}
-
 
 export default function Home({ match }) {
     const { loading, labels, types } = useSchema()
+    const dispatch = useDispatch()
+
+    const nodes = useSelector((state: TreeState) => state.nodes)
+    const selected = useSelector((state: TreeState) => state.selected)
 
 
-    const [ nodes, setNodes ] = useState<TreeItem[]>([])
-    const [ relationships, setRelationships ] = useState<TreeRelationship[]>([])
-    const [ filters, setFilters ] = useState<Filter[]>([]);
-    const [ properties, setProperties ] = useState<Property[]>();
+    // const [ nodes, setNodes ] = useState<TreeItem[]>([])
+    // const [ relationships, setRelationships ] = useState<TreeRelationship[]>([])
+    // const [ filters, setFilters ] = useState<Filter[]>([]);
+    // const [ properties, setProperties ] = useState<Property[]>();
+
+    // const [ selected, setSelected ] = useState<string>()
 
 
-    const addNode = (label: string) => {
-        const id: string = `n${nodes.length+1}`
+    if ( loading ) return <div className="flex flex-col h-full flex-grow justify-between">
+    <div className="flex flex-col h-full justify-center align-center">
+        <div className="bg-gray-200 p-4 rounded-md w-auto justify-center mx-auto text-center" style={{width: '200px'}}>
+            <p className="font-bold mb-4">Loading Schema...</p>
+        </div>
+    </div>
+</div>
 
-        setNodes( nodes.slice(0).concat({
-            id,
-            label,
-            // relationships: [],
-        } as TreeItem) )
 
-        return id
+    let graph = <InitialNodeSelector labels={labels} />
+
+    if ( nodes.length ) {
+        graph = <Graph />
     }
 
-    const addRelationship = (from: string, type: string, direction: string, label: string) => {
-        const id: string = `r${relationships.length+1}`
+    // let toolbar = <div>Select a node to continue</div>
 
-        const to = addNode(label)
+    // console.log(selected);
 
-        setRelationships( relationships.slice(0).concat({
-            id,
-            from,
-            to,
-            direction,
-            type,
-        }) )
-    }
-
-    const addFilter = (id: string, key: string, type: string, value: any) => {
-        setFilters( filters.slice(0).concat({ id, key, type, value }) )
-    }
-
-    // Initial State
-    useEffect(() => {
-        if (labels.length) {
-            addNode(labels[0].label)
-        }
-
-    }, [labels])
-
-    const root = nodes.find(node => !node.parent)
-
-    console.log('.. ', root);
+    // if ( selected ) {
+    //     toolbar = <div>
+    //         <div className="bg-gray-300 p-2  text-gray-900">
+    //             {selected}
+    //         </div>
+    //         <div className="p2 mb-2 border-b border-gray-600">
+    //             foo
+    //         </div>
+    //     </div>
+    // }
 
 
-    return <Container>
-        <Segment>
-            {root && <TreeNode
-                labels={labels}
-                types={types}
-                nodes={nodes}
-                relationships={relationships}
+    return (
+        <div className="flex flex-row h-screen">
 
-                addNode={addNode}
-                addRelationship={addRelationship}
-                addFilter={addFilter}
+            <div className="flex flex-grow bg-gray-100">
+                {graph}
+            </div>
 
-                key={root.id}
-                {...root}
-            />}
-        </Segment>
+            {selected && <Toolbar labels={labels} types={types} />}
+        </div>
+    )
 
-        <pre>{JSON.stringify(relationships, null, 2)}</pre>
+    // return <Container>
+    //     <Segment>
+    //         {root && <TreeNode
+    //             labels={labels}
+    //             types={types}
+    //             nodes={nodes}
+    //             relationships={relationships}
 
-    </Container>
+    //             addNode={addNode}
+    //             addRelationship={addRelationship}
+    //             addFilter={addFilter}
+
+    //             key={root.id}
+    //             {...root}
+    //         />}
+    //     </Segment>
+
+    //     <pre>{JSON.stringify(relationships, null, 2)}</pre>
+    // </Container>
 
 }

@@ -5,9 +5,13 @@ import * as serviceWorker from './serviceWorker';
 import { createDriver, Neo4jProvider } from 'use-neo4j';
 import appLogo from './logo.svg'
 import { version } from 'use-neo4j/package.json'
-import './index.css';
 import 'semantic-ui-css/semantic.min.css'
 
+import 'tailwindcss/dist/tailwind.css'
+import './index.css';
+import store from './store';
+
+import { Provider as ReduxProvider } from 'react-redux'
 
 const logo = () => {
   return (<div className="logo"><img src={appLogo} alt="logo" /></div>)
@@ -18,18 +22,21 @@ const footer = () => {
     <a href="https://github.com/adam-cowley/graphapp-starter-react" rel="noopener noreferrer" target="_blank">
       Built with GraphApp Starter Kit using<br />
       <code>use-neo4j</code> version {version}
-      </a>
-    </div>)
+    </a>
+  </div>)
 }
 
 const driver = createDriver('neo4j', 'localhost', 7687, 'neo4j', 'neo')
 
 ReactDOM.render(
   <React.StrictMode>
-    <Neo4jProvider driver={driver} logo={logo()} footer={footer()}>
-      <App />
-    </Neo4jProvider>
-  </React.StrictMode>,
+    <ReduxProvider store={store}>
+      <Neo4jProvider driver={driver} logo={logo()} footer={footer()}>
+        <App />
+      </Neo4jProvider>
+    </ReduxProvider>
+  </React.StrictMode>
+  ,
   document.getElementById('root')
 );
 

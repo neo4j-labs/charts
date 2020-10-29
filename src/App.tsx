@@ -13,11 +13,11 @@ function App() {
   return (
     <div className="App">
       <Router>
-        <Menu>
-          <Menu.Item as={Link} to='/'>
-            Home
-          </Menu.Item>
-        </Menu>
+        {/* <Menu> */}
+          {/* <Menu.Item as={Link} to='/'> */}
+            {/* Home */}
+          {/* </Menu.Item> */}
+        {/* </Menu> */}
         <Switch>
           <Route exact={true} path="/" component={Home} />
         </Switch>
