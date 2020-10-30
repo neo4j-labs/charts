@@ -29,11 +29,22 @@ export interface UseSchemaOutput {
     types: RelationshipTypeSchema[];
 }
 
+function toPropertySchema(properties: Record<string, Record<string, any>>): Record<string, PropertySchema> {
+    const ordered = Object.entries(properties)
+        .sort(([ a ], [ b ]) => a < b ? -1 : 1)
+        .map(([ key, value ]) => [ key, value as PropertySchema ])
+
+    return Object.fromEntries(ordered)
+}
+
 function toLabelSchema(label: string, input: Record<string, any>): LabelSchema {
     return {
         ...input,
         label,
-        relationships: Object.entries(input.relationships).map(([ key, value ]) => toRelationshipTypeSchema(key, value as Record<string, any>)),
+        relationships: Object.entries(input.relationships)
+            .map(([ key, value ]) => toRelationshipTypeSchema(key, value as Record<string, any>))
+            .sort((a, b) => a.type < b.type ? -1 : 1),
+        properties: toPropertySchema(input.properties),
         count: input?.count.toNumber(),
     } as LabelSchema
 }
@@ -43,6 +54,7 @@ function toRelationshipTypeSchema(type: string, input: Record<string, any>): Rel
         ...input,
         type,
         count: input.count?.toNumber(),
+        properties: toPropertySchema(input.properties),
     } as RelationshipTypeSchema
 }
 
@@ -56,18 +68,15 @@ export default function useSchema(): UseSchemaOutput {
             setLabels(Object.entries(first!.get('value'))
                 .filter(([ key, value ]) => (value as Record<string, any>).type === 'node')
                 .map(([ key, value ]) => toLabelSchema(key, value as Record<string, any>))
+                .sort((a, b) => a.label < b.label ? -1 : 1)
             )
 
             setTypes( Object.entries(first!.get('value'))
                 .filter(([ key, value ]) => (value as Record<string, any>).type === 'relationship')
                 .map(([ key, value ]) => toRelationshipTypeSchema(key, value as Record<string, any>))
+                .sort((a, b) => a.type < b.type ? -1 : 1)
             )
         }
-
-
-
-
-
     }, [first])
 
     return {
@@ -75,7 +84,4 @@ export default function useSchema(): UseSchemaOutput {
         labels,
         types,
     }
-
-
-
 }

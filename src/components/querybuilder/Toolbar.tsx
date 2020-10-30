@@ -1,18 +1,16 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { TreeState, addRelationship, addPredicate, Condition, removePredicate, removeReturn, addReturn } from '../../store'
-
-
+import { Condition, conditions } from '../../constants'
+import { RootState } from '../../store'
+import { addRelationship, addPredicate, removePredicate, removeReturn, addReturn, removeRelationship, removeNode } from '../../store/reducers/currentQuery'
 
 function ToolbarHeader({ text }) {
-    return <div className="bg-white p-4 font-bold text-gray-700 text-lg border-b border-gray-200 mb-4">{text}</div>
+    return <div className="toolbar-header bg-white p-4 font-bold text-gray-700 text-lg border-b border-gray-400">{text}</div>
 }
 
 function ToolbarSubheader({ text }) {
-    return <div className="bg-white p-4 font-bold text-gray-600 border-b border-gray-400 mb-4">{text}</div>
+    return <div className="toolbar-subheader bg-white p-4 font-bold text-gray-600 border-b border-gray-200 mb-4">{text}</div>
 }
-
-// function
 
 function ToolbarRelationship(props) {
     const dispatch = useDispatch()
@@ -20,26 +18,16 @@ function ToolbarRelationship(props) {
 
     const text = `(${props.from})${props.direction === 'in' ? '<' : ''}-[:${props.type}]-${props.direction === 'out' ? '>' : ''}(:${props.label})`
 
-    return <div>
-
-        <button onClick={handleRelationshipClick} className="text-left w-full bg-gray-100 text-gray-700 rounded-md px-4 py-2 mb-2 font-bold">
-            <span className="inline-block px-2 text-xs bg-gray-300 text-gray-6 mr-2">+</span>
-            {text}
-        </button>
-    </div>
+    return <button onClick={handleRelationshipClick} className="text-left w-full bg-gray-100 text-gray-700 rounded-md px-2 py-2 mb-2 font-bold">
+        <span className="inline-block px-2 text-xs rounded-md bg-green-300 text-green-800 mr-2">+</span>
+        {text}
+    </button>
 }
-
-const conditions: Condition[] = [
-    'equals',
-    'contains',
-    'starts with',
-    'ends with',
-]
 
 
 function ExistingPredicate(props) {
     const dispatch = useDispatch()
-    const { id, name, type, condition, negative, value } = props
+    const { id, name, condition, negative, value } = props
 
     const handleRemoveClick = () => {
         dispatch( removePredicate(id) )
@@ -54,31 +42,33 @@ function ExistingPredicate(props) {
 }
 
 function Predicates({ id }) {
-    const predicates = useSelector((state: TreeState) => state.predicates)
+    const predicates = useSelector((state: RootState) => state.currentQuery.predicates)
 
     const thesePredicates = predicates.filter(p => p.alias === id)
         .map(row => <ExistingPredicate key={[row.id, row.name, row.negative ? 'NOT': 'IS', row.condition, row.value].join('||')}
             {...row}
         />)
 
+    if ( !thesePredicates.length ) return null;
+
     return <div className="p-4 flex flex-col">
         {thesePredicates}
     </div>
 }
-
 
 function AddPredicateForm({ id, properties }) {
     const dispatch = useDispatch()
 
     const [ name, setName ] = useState<string>()
     const [ value, setValue ] = useState<string>('')
+    const [ negative, setNegative ] = useState<boolean>(false)
     const [ condition, setCondition ] = useState<Condition>(conditions[0])
 
     const handleAddPredicate = () => {
         if ( name && value !== '' ) {
             const thisProperty = properties[ name ]
 
-            dispatch( addPredicate({ alias: id, name, condition, type: thisProperty.type, value }) )
+            dispatch( addPredicate({ alias: id, name, condition, negative, type: thisProperty.type, value }) )
 
             setValue('')
             setCondition(conditions[0])
@@ -88,10 +78,14 @@ function AddPredicateForm({ id, properties }) {
     return <div className="p-4 flex flex-col">
         <select className="p-2 rounded-md border border-gray-400 mb-2" value={name} onChange={e => setName(e.target.value)}>
             <option></option>
-            {Object.keys(properties).map((key) => <option key={key} value={key}>{key}</option>)}
+            {Object.keys(properties).map((key) => <option key={key} value={key}>{key} ({ properties[key].type })</option>)}
         </select>
+        <div>
+            <input id="negative" type="checkbox" checked={negative} onChange={e => setNegative(e.target.checked)} />
+            <label className="ml-2 inline-block font-bold text-xs mb-2 leading-none" htmlFor="negative">NOT</label>
+        </div>
         <select className="p-2 rounded-md border border-gray-400 mb-2" value={condition} onChange={e => setCondition(e.target.value as Condition)}>
-        <option></option>
+            <option></option>
             {conditions.map((key) => <option key={key} value={key}>{key}</option>)}
         </select>
         <input className="p-2 rounded-md border border-gray-400 mb-2" value={value} onChange={e => setValue(e.target.value)} />
@@ -103,7 +97,7 @@ function AddPredicateForm({ id, properties }) {
 function ReturnFields({ id }) {
     const dispatch = useDispatch()
 
-    const output = useSelector((state: TreeState) => state.output)
+    const output = useSelector((state: RootState) => state.currentQuery.output)
     const handleRemoveClick = (id: string) => dispatch( removeReturn(id) )
 
     const theseFields = output.filter(p => p.alias === id)
@@ -111,6 +105,8 @@ function ReturnFields({ id }) {
             {row.name}
             <button className="p-2 rounded-sm border border-red-600 text-red-600 font-bold leading-none" onClick={() => handleRemoveClick(row.id)}>x</button>
         </div>)
+
+    if ( !theseFields.length ) return null;
 
     return <div className="p-4 flex flex-col">
         {theseFields}
@@ -137,15 +133,17 @@ function AddReturnForm({ id, properties }) {
     </div>
 }
 
-
 function NodeToolbar(props) {
-    const selected = useSelector((state: TreeState) => state.selected)
-    const nodes = useSelector((state: TreeState) => state.nodes)
+    const dispatch = useDispatch()
+    const selected = useSelector((state: RootState) => state.currentQuery.selected)
+    const nodes = useSelector((state: RootState) => state.currentQuery.nodes)
     const thisNode = nodes.find(node => node.id === selected)
 
     const thisLabel = thisNode && props.labels.find(label => label.label === thisNode!.label)
 
     if ( !selected || !thisNode || !thisLabel ) return <div></div>
+
+    const handleRemoveClick = () => dispatch(removeNode(thisNode!.id))
 
     const addRelationshipOptions = thisLabel.relationships.map(rel => rel.labels.map(label => ({
         key: `${rel.type}||${rel.direction}||${label}`,
@@ -156,46 +154,85 @@ function NodeToolbar(props) {
         .map(rel => <ToolbarRelationship key={rel.key} from={selected} {...rel} />)
 
 
-    return <div className="flex flex-col flex-grow-0 bg-white overflow-auto" style={{width: '420px'}}>
+    return <div className="toolbar flex-grow flex-shrink-0 node-toolbar h-full flex flex-col bg-white border-l border-gray-300" style={{width: '420px'}}>
         <ToolbarHeader text={`(${thisNode?.id}:${thisNode?.label})`} />
-
-        <ToolbarSubheader text="Predicates" />
-        <Predicates id={thisNode.id} />
-        <AddPredicateForm id={thisNode.id} properties={thisLabel.properties} />
-
-
-        <ToolbarSubheader text="Return Fields" />
-        <ReturnFields id={thisNode.id} />
-        <AddReturnForm id={thisNode.id} properties={thisLabel.properties} />
+        <div className="toolbar-scrollable flex flex-col flex-shrink flex-grow overflow-auto">
+            <ToolbarSubheader text="Predicates" />
+            <Predicates id={thisNode.id} />
+            <AddPredicateForm id={thisNode.id} properties={thisLabel.properties} />
 
 
-        <ToolbarSubheader text="Add Relationship" />
-        {/* <div className="font-bold mt-4 px-2">Add Relationship</div> */}
-        <div className="px-2">
-            {addRelationshipOptions}
+            <ToolbarSubheader text="Return Fields" />
+            <ReturnFields id={thisNode.id} />
+            <AddReturnForm id={thisNode.id} properties={thisLabel.properties} />
+
+
+            <ToolbarSubheader text="Add Relationship" />
+            <div className="px-2">
+                {addRelationshipOptions}
+            </div>
         </div>
+        {/* <div className="flex flex-grow"></div> */}
+        <ToolbarFooter handleRemoveClick={handleRemoveClick} removeText="Remove Node" />
     </div>
 }
 
 function RelationshipToolbar(props) {
-    const selected = useSelector((state: TreeState) => state.selected)
-    const nodes = useSelector((state: TreeState) => state.nodes)
-    const relationships = useSelector((state: TreeState) => state.relationships)
+    const dispatch = useDispatch()
+
+    const selected = useSelector((state: RootState) => state.currentQuery.selected)
+    const nodes = useSelector((state: RootState) => state.currentQuery.nodes)
+    const relationships = useSelector((state: RootState) => state.currentQuery.relationships)
     const thisRelationship = relationships.find(r => r.id === selected)
+    const thisType = props.types.find(type => type.type === thisRelationship?.type)
+
+    if ( !thisType ) {
+        return <div></div>
+    }
+
+    const handleRemoveClick = () => dispatch(removeRelationship(thisRelationship!.id))
 
     const startNode = nodes.find(node => node.id === thisRelationship?.from)
     const endNode = nodes.find(node => node.id === thisRelationship?.to)
 
-    const text = `(${startNode?.id}:${startNode?.label})${thisRelationship?.direction === 'in' ? '<': ''}-${thisRelationship?.id}:${thisRelationship?.type}-${thisRelationship?.direction === 'out' ? '>': ''}(${endNode?.id}:${endNode?.label})`
+    const text = `(${startNode?.id}:${startNode?.label})${thisRelationship?.direction === 'in' ? '<': ''}-[${thisRelationship?.id}:${thisRelationship?.type}]-${thisRelationship?.direction === 'out' ? '>': ''}(${endNode?.id}:${endNode?.label})`
 
-    return <div className="flex flex-col flex-grow-0 overflow-auto" style={{width: '420px'}}>
-        <ToolbarHeader text={text} />
+    const predicates = Object.keys(thisType.properties).length ? (
+    <div>
+        <ToolbarSubheader text="Predicates" />
+        <Predicates id={thisRelationship!.id} />
+        <AddPredicateForm id={thisRelationship!.id} properties={thisType.properties} />
+    </div>
+     ) : <div className="p-4">There are no properties on this relationship</div>
+
+    const returns = Object.keys(thisType.properties).length ? (
+    <div>
+        <ToolbarSubheader text="Return Fields" />
+        <ReturnFields id={thisRelationship!.id} />
+        <AddReturnForm id={thisRelationship!.id} properties={thisType.properties} />
+    </div>
+     ) : ''
+
+    return <div className="flex flex-col bg-white justify-between  border-l border-gray-300">
+    <ToolbarHeader text={text} />
+    <div className="flex flex-col flex-grow-0 overflow-auto" style={{width: '420px'}}>
+        {predicates}
+        {returns}
+    </div>
+    <div className="flex flex-grow"></div>
+    <ToolbarFooter handleRemoveClick={handleRemoveClick} removeText="Remove Relationship" />
+</div>
+}
+
+function ToolbarFooter({ handleRemoveClick, removeText }) {
+    return <div className="toolbar-footer p-4 border-t border-gray-400">
+        <button className="block w-full p-4 rounded-md border border-red-600 text-red-600 font-bold leading-none active:bg-red-100 focus:outline-none" onClick={handleRemoveClick}>{ removeText }</button>
     </div>
 }
 
 
 export default function Toolbar(props) {
-    const selected = useSelector((state: TreeState) => state.selected)
+    const selected = useSelector((state: RootState) => state.currentQuery.selected)
 
     if ( selected && selected.startsWith('n') ) {
         return <NodeToolbar {...props} />

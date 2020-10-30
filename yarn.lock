@@ -1353,10 +1353,10 @@
     call-me-maybe "^1.0.1"
     glob-to-regexp "^0.3.0"
 
-"@neode/querybuilder@^0.1.5":
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/@neode/querybuilder/-/querybuilder-0.1.5.tgz#576a13835f9dbd704b5b5344e79b6ed5eb1f1d12"
-  integrity sha512-naL4D2zB1rdoWjL7U1s+DXKPYGrd14EV1P9AvXVPd3q26riCUhwqAkmLATLlBO2yab20zpE9VQDLf5KiEbWwOQ==
+"@neode/querybuilder@^0.1.6":
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/@neode/querybuilder/-/querybuilder-0.1.6.tgz#a853fd74c0ac3f3099999271e9c495ee47913c4a"
+  integrity sha512-LdQdaeNrW0qp/G4U9D9IijN1DI66jSEh2eWPOxdkQjkqbPsOE200LfHVfpRtEQZoxVdwnxX8CgWoMhEZO2q66g==
   dependencies:
     neo4j-driver "^4.1.2"
     save "^2.4.0"

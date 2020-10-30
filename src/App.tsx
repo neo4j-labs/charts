@@ -3,6 +3,7 @@ import React from 'react';
 import { Container, Grid } from 'semantic-ui-react';
 import { useReadCypher } from 'use-neo4j'
 import Home from './views/Home'
+import QueryEditor from './views/QueryEditor'
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
 import { Menu } from 'semantic-ui-react'
 
@@ -20,6 +21,7 @@ function App() {
         {/* </Menu> */}
         <Switch>
           <Route exact={true} path="/" component={Home} />
+          <Route path="/query/:id" component={QueryEditor} />
         </Switch>
       </Router>
     </div>
