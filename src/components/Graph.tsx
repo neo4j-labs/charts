@@ -13,12 +13,12 @@ function TreeRelationship({ relationship }) {
     const handleNodeClick = () => dispatch( selectNode(relationship.to) )
 
     return <li>
-        <button className="bg-gray-200 text-gray-700 rounded-md px-4 py-2 mb-2 font-bold mr-2"  onClick={handleClick}>
+        <button className="bg-gray-200 text-gray-700 rounded-md px-4 py-2 mb-2 font-bold mr-2 focus:outline-none"  onClick={handleClick}>
             {relationship.direction === 'in' ? '<': ''}-
             <span className="bg-gray-100 text-gray-500 px-2 py-1 inline-block ml-1">{relationship.id}:{relationship.type}</span>
             -{relationship.direction === 'out' ? '>': ''}
         </button>
-        <button className="bg-gray-300 text-gray-700 rounded-full px-4 py-2 mb-2 font-bold" onClick={handleNodeClick}>
+        <button className="bg-gray-300 text-gray-700 rounded-full px-4 py-2 mb-2 font-bold focus:outline-none" onClick={handleNodeClick}>
             {relationship.to}
         </button>
     </li>
@@ -44,7 +44,7 @@ function TreeNode({ node }) {
 
     return (
         <li key={node.id} className="mb-4">
-            <button onClick={() => handleNodeClick(node.id)} className="bg-gray-300 text-gray-700 rounded-full px-4 py-2 mb-2 font-bold">
+            <button onClick={() => handleNodeClick(node.id)} className="bg-gray-300 text-gray-700 rounded-full px-4 py-2 mb-2 font-bold focus:outline-none">
                 {node.id}:
                 <span className="bg-gray-100 text-gray-500 px-2 py-1 inline-block ml-1">{node.label}</span>
 
@@ -102,8 +102,6 @@ function Query() {
 
     predicates.map(output => {
         const operator = operators[ output.condition ]
-
-        // console.log([ operator, output.negative ], output, Operator.EQUALS, [ operator, output.negative ] = [ Operator.EQUALS, true ]);
 
         if ( output.negative ) {
             switch (operator) {

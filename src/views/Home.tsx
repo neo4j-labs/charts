@@ -1,52 +1,67 @@
 /* eslint-disable */
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
-
-
-import useSchema from '../hooks/use-schema';
-import Graph from '../components/Graph';
-import InitialNodeSelector from '../components/querybuilder/InitialNodeSelector';
-import Toolbar from '../components/querybuilder/Toolbar';
 import { useDispatch, useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 import { RootState } from '../store'
-import { setName } from '../store/reducers/currentQuery';
-import { addQuery } from '../store/reducers/queries';
+import { addDashboard } from '../store/reducers/dashboards'
 
 
-export default function Home({ match }) {
+export default function Home() {
     const dispatch = useDispatch()
-
-    const queries = useSelector((state: RootState) => state.queries)
-        .map(query => <Link class="text-blue-600 font-bold mb-2" key={query.id} to={`/query/${query.id}`}>{query.name}</Link>)
-
+    const dashboards = useSelector((n: RootState) => n.dashboards.dashboards)
 
     const [ name, setName ] = useState<string>('')
+    const [ description, setDescription ] = useState<string>('')
 
-    const handleNameChange = e => setName(e.target.value)
-    const handleAddQuery = () => {
+    const handleAddDashboardClick = () => {
         if ( name !== '' ) {
-            dispatch(addQuery(name))
+            dispatch(addDashboard(name, description))
             setName('')
+            setDescription('')
         }
     }
 
     return (
-        <div className="flex flex-col h-full">
-            <div className="flex flex-col h-full justify-center">
-                <div className="bg-gray-200 p-4 rounded-md w-auto justify-center mx-auto" style={{width: '320px'}}>
-                    {queries.length ? <div>
-                        <p className="font-bold mb-4">Select Query</p>
-                        {queries}
-                    </div> : ''}
+        <div className="flex flex-col w-full">
 
-                    <p className="font-bold mt-8 mb-4">Add New Query</p>
-                    <input className="w-full rounded-md border border-gray-400 p-2 mb-2" type="text" value={name} onChange={handleNameChange} />
-                    <button className="block w-full px-4 py-2 rounded-md border font-bold border-blue-600 bg-white text-blue-600" onClick={handleAddQuery}>Add Query</button>
+            <div className="query-header flex flex-row flex-grow-0 bg-white border-b border-gray-300 p-4 mb-4">
+                <div className="flex justify-top flex-grow-0 mr-2 py-2">
+                    <Link className="block bg-transparent text-lg font-bold focus:outline-none" to="/">
+                        <span className="text-blue-600 mr-2">
+                        Dashboards
+                        </span>
+                    </Link>
+                </div>
+            </div>
+
+            <div className="w-full">
+                <div className="container m-auto">
+                    <div className="flex flex-row flex-wrap">
+                        {dashboards.map(dashboard => <div className="w-1/4 p-2" key={dashboard.id}>
+                            <div className="flex flex-col bg-white shadow-sm rounded-md p-4">
+                                <Link key={dashboard.id} to={`/dashboards/${dashboard.id}`} className="text-xl text-gray-600 font-bold mb-4">
+                                    {dashboard.name}
+                                </Link>
+
+                                {dashboard.description}
+
+                                <div className="text-gray-400 mt-2 text-sm">
+                                {dashboard.savedAt.toString()}
+                                </div>
+                            </div>
+                        </div>)}
+                    </div>
+
+                    <div className="py-4">
+                        <input type="text" onChange={e => setName(e.target.value)} />
+                        <br />
+                        <input type="text" onChange={e => setDescription(e.target.value)} />
+                        <br />
+
+                        <button onClick={handleAddDashboardClick}>Add Dashboard</button>
+                    </div>
                 </div>
             </div>
         </div>
     )
-
-
-
 }

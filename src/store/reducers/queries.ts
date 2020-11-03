@@ -28,22 +28,12 @@ export function updateQuery(payload: TreeState) {
     }
 }
 
-// export interface Query {
-//     id: string;
-//     name: string;
-//     savedAt?: Date;
-//     tree?: TreeState;
-// }
-
 type QueriesState = TreeState[]
-
 
 const initialState: QueriesState = JSON.parse( window.localStorage.getItem(LOCAL_STORAGE_KEY) || '[]' )
 
 
 export default function queriesReducer(state: QueriesState = initialState, action) {
-    console.log(action.type, action.payload);
-
     switch (action.type) {
         case ADD_QUERY:
             state = state.concat({

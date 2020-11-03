@@ -53,43 +53,35 @@ function QueryEditorForm({ history, labels, types }) {
     }
 
     return (
-        <div className="query-stage flex flex-col h-full">
-            <QueryHeader history={history} />
+        <div className="query-stage flex flex-col w-full">
+            <QueryHeader />
 
             <div className="query-stage flex flex-grow-1 h-full flex-row bg-gray-100">
                 {graph}
 
                 {selected && <Toolbar labels={labels} types={types} />}
             </div>
-
-            {/* <div className="query-ight flex flex-grow-1 min-w-64">
-
-                {selected && <Toolbar labels={labels} types={types} />}
-
-            </div> */}
         </div>
     )
 
 }
 
-function QueryHeader({ history }) {
+function QueryHeader() {
     const dispatch = useDispatch()
     const currentQuery = useSelector((state: RootState) => state.currentQuery)
 
     const setUpdatedName = name => dispatch(setName(name))
     const handleUpdateQueryClick = () => {
-        // TODO: Update on the go?  Or wait for a click?
         dispatch(updateQuery(currentQuery))
-        // history.push('/')
     }
     const handleDeleteClick = () => dispatch(deleteQuery(currentQuery.id as string))
 
     return (
         <div className="query-header flex flex-row flex-grow-0 bg-white border-b border-gray-300 p-4">
             <div className="flex justify-top flex-grow-0 mr-2 py-2">
-                <Link className="block bg-transparent text-lg font-bold focus:outline-none border-b border-transparent focus:border-blue-400" to="/">
+                <Link className="block bg-transparent text-lg font-bold focus:outline-none" to="/">
                     <span className="text-blue-600 mr-2">
-                    Home
+                    Queries
                     </span>
                     <span className="text-gray-400">
                     /

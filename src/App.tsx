@@ -1,19 +1,28 @@
 /* eslint-disable */
 import React from 'react';
-import { Container, Grid } from 'semantic-ui-react';
-import { useReadCypher } from 'use-neo4j'
 import Home from './views/Home'
+import Queries from './views/Queries'
 import QueryEditor from './views/QueryEditor'
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
-import { Menu } from 'semantic-ui-react'
+
 
 import './App.css';
+import Dashboard from './views/Dashboard';
 
 function App() {
 
   return (
-    <div className="App">
+    <div className="App flex flex-col">
       <Router>
+      <div className="flex flex-row w-full bg-gray-800 flex-grow-0 flex-shrink-0 w-64">
+        <Link to="/" className="px-4 py-6 bg-gray-700 text-white hover:text-gray-200">
+          <span>Graph</span><span className="font-bold text-gray-200">Panel</span>
+        </Link>
+        <div className="flex flex-grow"></div>
+        <Link className="text-white px-4 py-6 hover:text-gray-200 hover:bg-gray-700" to="/">Dashboards</Link>
+        <Link className="text-white px-4 py-6 hover:text-gray-200 hover:bg-gray-700" to="/queries">Queries</Link>
+      </div>
+      <div className="flex flex-grow w-full bg-gray-100 overflow-auto">
         {/* <Menu> */}
           {/* <Menu.Item as={Link} to='/'> */}
             {/* Home */}
@@ -21,8 +30,11 @@ function App() {
         {/* </Menu> */}
         <Switch>
           <Route exact={true} path="/" component={Home} />
+          <Route path="/queries" component={Queries} />
+          <Route path="/dashboards/:id" component={Dashboard} />
           <Route path="/query/:id" component={QueryEditor} />
         </Switch>
+      </div>
       </Router>
     </div>
   )

@@ -23,3 +23,14 @@ export const directions = {
 }
 
 
+export const reportSources = [
+    { key: 'cypher', value: 'cypher', text: 'Raw Cypher Query', },
+    { key: 'query', value: 'query', text: 'Query from Query Builder', },
+]
+
+export const reportTypes = [
+    { key: 'metric', value: 'metric', text: 'Metric', },
+    { key: 'bar', value: 'bar', text: 'bar', },
+    { key: 'line', value: 'line', text: 'line', },
+    { key: 'etc', value: 'etc', text: 'etc', },
+]
