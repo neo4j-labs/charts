@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { RootState } from '../store'
 import { addDashboard } from '../store/reducers/dashboards'
+import Button from '../components/button'
 
 
 export default function Home() {
@@ -37,7 +38,7 @@ export default function Home() {
             <div className="w-full">
                 <div className="container m-auto">
                     <div className="flex flex-row flex-wrap">
-                        {dashboards.map(dashboard => <div className="w-1/4 p-2" key={dashboard.id}>
+                        {dashboards && dashboards.map(dashboard => <div className="w-1/4 p-2" key={dashboard.id}>
                             <div className="flex flex-col bg-white shadow-sm rounded-md p-4">
                                 <Link key={dashboard.id} to={`/dashboards/${dashboard.id}`} className="text-xl text-gray-600 font-bold mb-4">
                                     {dashboard.name}
@@ -53,12 +54,12 @@ export default function Home() {
                     </div>
 
                     <div className="py-4">
-                        <input type="text" onChange={e => setName(e.target.value)} />
+                        <input className="border rounded-md mb-2 border-gray-600" type="text" onChange={e => setName(e.target.value)} placeholder="name" />
                         <br />
-                        <input type="text" onChange={e => setDescription(e.target.value)} />
+                        <input className="border rounded-md mb-2 border-gray-600" type="text" onChange={e => setDescription(e.target.value)} placeholder="description" />
                         <br />
 
-                        <button onClick={handleAddDashboardClick}>Add Dashboard</button>
+                        <Button text="Add Dashboard" onClick={handleAddDashboardClick} />
                     </div>
                 </div>
             </div>

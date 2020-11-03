@@ -96,9 +96,12 @@ export function deleteReport(id: string) {
     }
 }
 
-const initialState: DashboardsState = JSON.parse( window.localStorage.getItem(LOCAL_STORAGE_KEY) || '[]' )
+const initialState: DashboardsState = JSON.parse( window.localStorage.getItem(LOCAL_STORAGE_KEY) || '{"dashboards":[],"reports":[]}' )
 
 export default function dashboardsReducer(state: DashboardsState = initialState, action: Record<string, any>) {
+
+    console.log(state, initialState);
+
     switch (action.type) {
         case ADD_DASHBOARD:
             state = {
