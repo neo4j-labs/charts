@@ -1,6 +1,6 @@
 {
-  "short_name": "Graph App Starter",
-  "name": "Graph App Starter - React",
+  "short_name": "GraphPanel",
+  "name": "Graph Panel - Charts in graphs",
   "icons": [
     {
       "src": "favicon.ico",

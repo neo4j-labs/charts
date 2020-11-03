@@ -1,12 +1,9 @@
 import React from 'react'
-import { Dimmer, Loader } from 'semantic-ui-react'
 
-const LoaderExampleLoader = () => (
-  <div style={{height: 200}}>
-    <Dimmer inverted active>
-      <Loader size="huge" />
-    </Dimmer>
-  </div>
-)
-
-export default LoaderExampleLoader
+export default function Loading() {
+    return (
+        <div className="bg-blue-100 h-full w-full">
+            Loading...
+        </div>
+    )
+}

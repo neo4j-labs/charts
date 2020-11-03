@@ -6,6 +6,7 @@ import { TreeState, selectNode, selectRelationship } from '../store/reducers/cur
 import { conditions, directions, operators } from '../constants'
 import { Operator } from '@neode/querybuilder'
 import { RootState } from '../store';
+import { queryToCypher } from '../utils';
 
 function TreeRelationship({ relationship }) {
     const dispatch = useDispatch()
@@ -71,120 +72,12 @@ function TreeNode({ node }) {
 
 
 function Query() {
-    const builder = new Builder()
-
-
-    const nodes = useSelector((state: RootState) => state.currentQuery.nodes)
-    const relationships = useSelector((state: RootState) => state.currentQuery.relationships)
-    const predicates = useSelector((state: RootState) => state.currentQuery.predicates)
-    const output = useSelector((state: RootState) => state.currentQuery.output)
-
-    const endNodes = relationships.map(rel => rel.to)
-
-    const root = nodes.find(node => !endNodes.includes(node.id))
-
-    builder.match(root!.id, root?.label)
-
-    let lastEnd = root!.id
-
-    relationships.map(rel => {
-        const to = nodes.find(node => node.id === rel.to)
-
-        if ( lastEnd !== rel.from ) {
-            builder.match(rel.from)
-        }
-
-        lastEnd = rel.to
-
-        builder.relationship(rel.type, directions[ rel.direction ], rel.id)
-        builder.to(rel.to, to?.label)
-    })
-
-    predicates.map(output => {
-        const operator = operators[ output.condition ]
-
-        if ( output.negative ) {
-            switch (operator) {
-                case Operator.CONTAINS:
-                    builder.whereNotContains(`${output.alias}.${output.name}`, output.value)
-                    break;
-
-                case Operator.STARTS_WITH:
-                    builder.whereNotStartsWith(`${output.alias}.${output.name}`, output.value)
-                    break;
-
-                case Operator.ENDS_WITH:
-                    builder.whereNotEndsWith(`${output.alias}.${output.name}`, output.value)
-                    break;
-
-                case Operator.GREATER_THAN:
-                    builder.whereLessThan(`${output.alias}.${output.name}`, output.value)
-                    break;
-
-                case Operator.GREATER_THAN_OR_EQUAL:
-                    builder.whereLessThanOrEqual(`${output.alias}.${output.name}`, output.value)
-                    break;
-
-                case Operator.LESS_THAN:
-                    builder.whereGreaterThan(`${output.alias}.${output.name}`, output.value)
-                    break;
-
-                case Operator.LESS_THAN_OR_EQUAL:
-                    builder.whereGreaterThanOrEqual(`${output.alias}.${output.name}`, output.value)
-                    break;
-
-                default:
-                    builder.whereNot(`${output.alias}.${output.name}`, output.value)
-                    break;
-            }
-        }
-        else {
-            switch (operator) {
-                case Operator.CONTAINS:
-                    builder.whereContains(`${output.alias}.${output.name}`, output.value)
-                    break;
-
-                case Operator.STARTS_WITH:
-                    builder.whereStartsWith(`${output.alias}.${output.name}`, output.value)
-                    break;
-
-                case Operator.ENDS_WITH:
-                    builder.whereEndsWith(`${output.alias}.${output.name}`, output.value)
-                    break;
-
-                case Operator.GREATER_THAN:
-                    builder.whereGreaterThan(`${output.alias}.${output.name}`, output.value)
-                    break;
-
-                case Operator.GREATER_THAN_OR_EQUAL:
-                    builder.whereGreaterThanOrEqual(`${output.alias}.${output.name}`, output.value)
-                    break;
-
-                case Operator.LESS_THAN:
-                    builder.whereLessThan(`${output.alias}.${output.name}`, output.value)
-                    break;
-
-                case Operator.LESS_THAN_OR_EQUAL:
-                    builder.whereLessThanOrEqual(`${output.alias}.${output.name}`, output.value)
-                    break;
-
-                default:
-                    builder.where(`${output.alias}.${output.name}`, output.value)
-                    break;
-            }
-        }
-
-    })
-
-    output.map(output => {
-        builder.return(`${output.alias}.${output.name}`)
-    })
-
-    const { cypher, params } = builder.build()
+    const query = useSelector((state: RootState) => state.currentQuery)
+    const { cypher, params } = queryToCypher(query)
 
     const paramStatements = Object.entries(params).map(([ key, value ]) => <pre key={key}>:param {key}: {value}</pre>)
 
-    return <div className="flex-grow p-2 bg-white mt-4 leading-8 bg-blue-100 text-blue-800 w-full">
+    return <div className="flex-grow p-2 mt-4 leading-8 bg-blue-100 text-blue-800 w-full">
         {paramStatements}
 
         <pre className="pt-2 mt-4 border-t border-gray-300">
@@ -202,7 +95,7 @@ export default function Graph() {
         <div className="flex flex-col w-full h-full">
             <div className="w-full flex-grow overflow-auto">
                 <ul className="p-2">
-                    {nodes.map(node => <TreeNode key={node.id} node={node} />)}
+                    {nodes?.map(node => <TreeNode key={node.id} node={node} />)}
                 </ul>
             </div>
             <Query />

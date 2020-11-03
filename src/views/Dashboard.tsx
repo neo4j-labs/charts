@@ -9,9 +9,7 @@ import Button from '../components/forms/button'
 import Modal from '../components/modal'
 import Card from '../components/card'
 import MetricReport from '../components/reports/metric'
-
-
-
+import MetricTable from '../components/reports/table'
 
 function Report(props) {
     const [ tab, setTab ] = useState<string>('report')
@@ -41,6 +39,9 @@ function Report(props) {
     }
     else if ( props.type === 'metric' ) {
         content = <MetricReport query={props.query} />
+    }
+    else if ( props.type === 'table' ) {
+        content = <MetricTable source={props.source} query={props.query} />
     }
 
     return (
@@ -115,6 +116,9 @@ export default function Dashboard({ match }) {
     const dispatch = useDispatch()
     const dashboard = useSelector((state: RootState) => state.dashboards.dashboards.find(row => row.id === match.params.id))
     const reports = useSelector((state: RootState) => state.dashboards.reports.filter(row => row.dashboard === match.params.id))
+
+    // Sort reports by `order`
+    reports.sort((a, b) => a.order < b.order ? -1 : 1)
 
     if (!dashboard) {
         return <Redirect to="/" />

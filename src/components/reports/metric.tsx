@@ -15,10 +15,9 @@ function Loading() {
 export default function MetricReport(props: MetricReportProps) {
     const { loading, first } = useReadCypher(props.query)
 
-    if ( loading ) {
+    if ( loading || !first ) {
         return <Loading />
     }
-
 
     let count
 
