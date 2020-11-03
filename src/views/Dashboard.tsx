@@ -1,31 +1,16 @@
 /* eslint-disable */
-import { report } from 'process'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, Redirect } from 'react-router-dom'
 import { RootState } from '../store'
 import { addReport, updateReport, deleteDashboard, deleteReport, updateDashboard } from '../store/reducers/dashboards'
 import { reportSources, reportTypes } from '../constants'
-import Button from '../components/button'
+import Button from '../components/forms/button'
 import Modal from '../components/modal'
+import Card from '../components/card'
+import MetricReport from '../components/reports/metric'
 
 
-function Tab(props) {
-    let classes = 'border-b-2 pb-2 text-sm focus:outline-none '
-
-    if ( props.active ) [
-        classes += 'text-blue-800 border-blue-600'
-    ]
-    else {
-        classes += 'text-gray-600 border-transparent'
-    }
-
-    return (
-        <div className="flex flex-row justify-baseline ml-2">
-            <button className={classes} onClick={props.onClick}>{props.text}</button>
-        </div>
-    )
-}
 
 
 function Report(props) {
@@ -44,23 +29,24 @@ function Report(props) {
         setTab('report')
     }
 
+    const tabs = [
+        { text: 'Edit', active: tab === 'edit', onClick: () => setTab('edit') },
+        { text: 'Delete', onClick: () => handleDelete() },
+    ]
+
+    let content = <pre>{JSON.stringify(props, null, 2)}</pre>;
+
+    if ( tab === 'edit' ) {
+        content = <ReportForm dashboard={props.dashboard} report={props} submitText="Update Report" onSubmit={handleUpdateReport} />
+    }
+    else if ( props.type === 'metric' ) {
+        content = <MetricReport query={props.query} />
+    }
+
     return (
-        <div className="bg-white shadow-sm rounded-md p-4">
-            <div className="report-header border-b border-gray-200 pt-2 flex flex-row align-baseline">
-                <h1 className="text-xl text-gray-600 font-bold pb-4" onClick={() => setTab('report')}>{ props.name }</h1>
-                <div className="flex-grow"></div>
-
-                <Tab text='Edit' active={tab === 'edit'} onClick={() => setTab('edit')} />
-                <Tab text='Delete' active={false} onClick={handleDelete} />
-            </div>
-
-            <div className="h-64 overflow-auto">
-
-            {tab === 'edit' && <ReportForm dashboard={props.dashboard} report={props} submitText="Update Report" onSubmit={handleUpdateReport} />}
-            {tab === 'report' && <pre>{JSON.stringify(props, null, 2)}</pre>}
-            </div>
-
-        </div>
+        <Card title={props.name} tabs={tabs} onTitleClick={() => setTab('report')}>
+            {content}
+        </Card>
     )
 }
 
@@ -137,8 +123,7 @@ export default function Dashboard({ match }) {
     const [name, setName] = useState(dashboard.name)
     const [description, setDescription] = useState(dashboard.description)
 
-    const [ showAddReport, setShowAddReport ] = useState<boolean>(true)
-
+    const [ showAddReport, setShowAddReport ] = useState<boolean>(false)
 
     const handleDeleteClick = () => {
         if (confirm('Are you sure you want to delete this dashboard?')) {
@@ -153,6 +138,8 @@ export default function Dashboard({ match }) {
 
     const handleAddReport = (dashboard, name, type, source, query, columns) => {
         dispatch( addReport(dashboard, name, type, source, query, columns) )
+
+        setShowAddReport(false)
     }
 
     const handleShowAddReportClick = () => setShowAddReport(true)
@@ -207,6 +194,16 @@ export default function Dashboard({ match }) {
                     {reports.map(report => <div className={`w-${report.columns == 4 ? 'full' : `${report.columns}/4 `} p-2`} key={report.id}>
                         <Report {...report} />
                     </div>)}
+
+                    {!reports.length && <div className="flex flex-col w-full">
+                        <div className="p-12 bg-white w-auto m-auto">
+                            <h2 className="font-bold text-xl text-center text-blue-600">Let's get exploring!</h2>
+                            <p className="mx-auto my-8 text-center">You can add a report by clicking the <strong>Add Report</strong> button below</p>
+                            <div className="text-center">
+                                <Button size="md" colour="blue" text="Add Report" onClick={handleShowAddReportClick} />
+                            </div>
+                        </div>
+                    </div>}
 
 
                     {/* <div className="w-1/4 p-2">
@@ -294,11 +291,7 @@ export default function Dashboard({ match }) {
                 </Link>
             </div>)} */}
 
-
-
-
-
-            <pre>{JSON.stringify(reports, null, 2)}</pre>
+            {/* <pre>{JSON.stringify(reports, null, 2)}</pre> */}
         </div>
     )
 
