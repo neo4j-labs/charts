@@ -9,18 +9,15 @@ import Modal from '../components/modal'
 import Card from '../components/card'
 
 
-export default function Home() {
+export default function Home({ history }) {
     const dispatch = useDispatch()
     const dashboards = useSelector((n: RootState) => n.dashboards.dashboards)
 
     const [ showAddForm, setShowAddForm ] = useState<boolean>(false)
-
-    const handleShowAddClick = () => setShowAddForm(true)
-
-
     const [ name, setName ] = useState<string>('')
     const [ description, setDescription ] = useState<string>('')
 
+    const handleShowAddClick = () => setShowAddForm(true)
     const handleAddDashboardClick = () => {
         if ( name !== '' ) {
             dispatch(addDashboard(name, description))
@@ -36,6 +33,8 @@ export default function Home() {
         }
     }
 
+    const goToDashboard = id => history.push(`/dashboards/${id}`)
+
     return (
         <div className="flex flex-col w-full">
             <div className="query-header flex flex-row flex-grow-0 bg-white border-b border-gray-300 p-4 mb-4">
@@ -50,16 +49,15 @@ export default function Home() {
                 <div className="flex flex-grow"></div>
 
                 <div className="ml-2">
-                        <Button size="sm" colour="blue" text="Add Dashboard" onClick={handleShowAddClick} />
-                    </div>
+                    <Button size="sm" colour="blue" text="Add Dashboard" onClick={handleShowAddClick} />
+                </div>
             </div>
 
             <div className="w-full">
                 <div className="container m-auto">
                     <div className="flex flex-row flex-wrap pt-8">
                         {dashboards && dashboards.map(dashboard => <div className="w-1/4 p-2" key={dashboard.id}>
-                            <Card title={dashboard.name} tabs={ [ { text: 'Delete', onClick: () => handleDeleteDashboardClick(dashboard.id) } ] }>
-
+                            <Card title={dashboard.name} onTitleClick={() => goToDashboard(dashboard.id)} tabs={ [ { text: 'Delete', onClick: () => handleDeleteDashboardClick(dashboard.id) } ] }>
                                 <div className="flex flex-grow">
                                 {dashboard.description}
                                 </div>
@@ -70,28 +68,8 @@ export default function Home() {
                                 </div>
 
                             </Card>
-                            {/* <div className="flex flex-col bg-white shadow-sm rounded-md p-4">
-                                <Link key={dashboard.id} to={`/dashboards/${dashboard.id}`} className="text-xl text-gray-600 font-bold mb-4">
-                                    {dashboard.name}
-                                </Link>
-
-                                {dashboard.description}
-
-                                <div className="text-gray-400 mt-2 text-sm">
-                                {dashboard.savedAt.toString()}
-                                </div>
-                            </div> */}
                         </div>)}
                     </div>
-
-                    {/* <div className="py-4">
-                        <input className="border rounded-md mb-2 border-gray-600" type="text" onChange={e => setName(e.target.value)} placeholder="name" />
-                        <br />
-                        <input className="border rounded-md mb-2 border-gray-600" type="text" onChange={e => setDescription(e.target.value)} placeholder="description" />
-                        <br />
-
-                        <Button text="Add Dashboard" onClick={handleAddDashboardClick} />
-                    </div> */}
                 </div>
             </div>
 

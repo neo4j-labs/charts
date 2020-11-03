@@ -30,6 +30,7 @@ export const reportSources = [
 
 export const reportTypes = [
     { key: 'metric', value: 'metric', text: 'Metric', },
+    { key: 'table', value: 'table', text: 'Table', },
     { key: 'bar', value: 'bar', text: 'bar', },
     { key: 'line', value: 'line', text: 'line', },
     { key: 'etc', value: 'etc', text: 'etc', },

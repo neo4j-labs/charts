@@ -8,7 +8,7 @@ interface CardTab {
 }
 
 interface CardProps {
-    title: string;
+    title?: string;
     onTitleClick?: () => void;
     tabs?: CardTab[];
     children: any;
