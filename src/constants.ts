@@ -1,4 +1,5 @@
-import { Direction, Operator } from "@neode/querybuilder"
+import { Direction, Operator, AggregationFunction } from "@neode/querybuilder"
+
 
 export type ApocDirection = 'in' | 'out' | 'both'
 export type Condition = 'equals' | 'contains' | 'starts with' | 'ends with' | 'greater than' | 'less than' | 'greater than or equal' | 'less than or equal'
@@ -34,4 +35,23 @@ export const reportTypes = [
     { key: 'bar', value: 'bar', text: 'bar', },
     { key: 'line', value: 'line', text: 'line', },
     { key: 'etc', value: 'etc', text: 'etc', },
+]
+
+interface AggregationFunctionOption {
+    key: string;
+    text: string;
+    value: AggregationFunction;
+}
+
+export const aggregateFunctions: AggregationFunctionOption[] = [
+    { key: 'avg',  value: 'avg', text: 'avg', },
+    { key: 'collect',  value: 'collect', text: 'collect', },
+    { key: 'count', value: 'count',text: 'count',},
+    { key: 'max', value: 'max',text: 'max',},
+    { key: 'min', value: 'min',text: 'min',},
+    { key: 'percentileCont',  value: 'percentileCont', text: 'percentileCont', },
+    { key: 'percentileDisc',  value: 'percentileDisc', text: 'percentileDisc', },
+    { key: 'stDev',  value: 'stDev', text: 'stDev', },
+    { key: 'stDevP', value: 'stDevP',text: 'stDevP', },
+    { key: 'sum', value: 'sum', text: 'sum'},
 ]

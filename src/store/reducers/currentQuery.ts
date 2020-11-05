@@ -1,85 +1,7 @@
-import { ApocDirection, Condition } from "../../constants"
-
-export const LOAD_QUERY = 'LOAD_QUERY'
-export const ADD_NODE = 'ADD_NODE'
-export const SELECT_NODE = 'SELECT_NODE'
-export const REMOVE_NODE = 'REMOVE_NODE'
-export const ADD_RELATIONSHIP = 'ADD_RELATIONSHIP'
-export const SELECT_RELATIONSHIP = 'SELECT_RELATIONSHIP'
-export const REMOVE_RELATIONSHIP = 'REMOVE_RELATIONSHIP'
-export const ADD_PREDICATE = 'ADD_PREDICATE'
-export const REMOVE_PREDICATE = 'REMOVE_PREDICATE'
-export const ADD_RETURN = 'ADD_RETURN'
-export const REMOVE_RETURN = 'REMOVE_RETURN'
-
-export const SET_NAME = 'SET_NAME'
-
-export function setName(name: string | undefined) {
-    return {
-        type: SET_NAME,
-        payload: { name },
-    }
-}
+import { ADD_NODE, ADD_PREDICATE, ADD_RELATIONSHIP, ADD_RETURN, LOAD_QUERY, Query, REMOVE_NODE, REMOVE_PREDICATE, REMOVE_RELATIONSHIP, REMOVE_RETURN, SELECT_NODE, SELECT_RELATIONSHIP, SET_NAME } from "../actions"
 
 
-export function loadQuery(payload) {
-    return {
-        type: LOAD_QUERY,
-        payload,
-    }
-}
-
-
-export interface TreeNode {
-    id: string;
-    label: string;
-}
-
-export interface TreeRelationship {
-    id: string;
-    from: string;
-    to: string;
-    type: string;
-    direction: ApocDirection;
-}
-
-interface TreePredicatePayload {
-    alias: string;
-    name: string;
-    type: any;
-    condition: Condition;
-    negative?: boolean;
-    value: any;
-}
-
-interface TreePredicate extends TreePredicatePayload {
-    id: string;
-}
-
-interface TreeReturnPayload {
-    alias: string;
-    name: string;
-}
-
-interface TreeReturn extends TreeReturnPayload {
-    id: string;
-}
-
-export interface TreeState {
-    loaded: boolean;
-    updated: boolean;
-    id?: string;
-    name?: string;
-    savedAt?: Date;
-
-    selected?: string;
-    nodes: TreeNode[];
-    relationships: TreeRelationship[];
-    predicates: TreePredicate[];
-    output: TreeReturn[];
-}
-
-const initialState: TreeState = {
+const initialState: Query = {
     updated: false,
     loaded: false,
     nodes: [],
@@ -88,91 +10,7 @@ const initialState: TreeState = {
     output: [],
 }
 
-// {
-//     updated: false,
-
-//     id: v4(),
-//     name: 'My Query',
-//     savedAt: undefined,
-//     selected: undefined,
-//     nodes: [
-//         { id: 'n1', label: 'Actor' }
-//     ],
-//     relationships: [],
-//     predicates: [],
-//     output: [],
-// }
-
-export function addNode(label: string) {
-    return {
-        type: ADD_NODE,
-        payload: { label },
-    }
-}
-
-export function selectNode(payload: string) {
-    return {
-        type: SELECT_NODE,
-        payload,
-    }
-}
-
-export function removeNode(id: string) {
-    return {
-        type: REMOVE_NODE,
-        payload: { id },
-    }
-}
-
-export function addRelationship(payload: TreeRelationship) {
-    return {
-        type: ADD_RELATIONSHIP,
-        payload,
-    }
-}
-export function selectRelationship(payload: string) {
-    return {
-        type: SELECT_RELATIONSHIP,
-        payload,
-    }
-}
-export function removeRelationship(id: string) {
-    return {
-        type: REMOVE_RELATIONSHIP,
-        payload: { id },
-    }
-}
-
-
-export function addPredicate(payload: TreePredicatePayload) {
-    return {
-        type: ADD_PREDICATE,
-        payload
-    }
-}
-
-export function removePredicate(id: string) {
-    return {
-        type: REMOVE_PREDICATE,
-        payload: { id }
-    }
-}
-
-export function addReturn(payload: TreeReturnPayload) {
-    return {
-        type: ADD_RETURN,
-        payload
-    }
-}
-
-export function removeReturn(id: string) {
-    return {
-        type: REMOVE_RETURN,
-        payload: { id }
-    }
-}
-
-function removeRelationshipFromTree(id: string, state: TreeState): TreeState {
+function removeRelationshipFromTree(id: string, state: Query): Query {
     const toRemove = state.relationships.find(rel => rel.id === id)
 
     // Remove the end node of this relationship
@@ -196,7 +34,7 @@ function removeRelationshipFromTree(id: string, state: TreeState): TreeState {
 }
 
 
-function removeNodeFromTree(id: string, state: TreeState): TreeState {
+function removeNodeFromTree(id: string, state: Query): Query {
     const atStart = state.relationships.filter(row => row.from === id)
 
     // If node is at the start, remove all relationships further down the chain
@@ -223,12 +61,12 @@ function removeNodeFromTree(id: string, state: TreeState): TreeState {
     return state
 }
 
-export default function queryReducer(state: TreeState = initialState, action: Record<string, any>): TreeState {
+export default function queryReducer(state: Query = initialState, action: Record<string, any>): Query {
     state.updated = false
 
     switch (action.type) {
         case LOAD_QUERY:
-            return action.payload as TreeState
+            return action.payload as Query
 
 
         case SET_NAME:
@@ -236,17 +74,6 @@ export default function queryReducer(state: TreeState = initialState, action: Re
                 ...state,
                 name: action.payload.name
             }
-
-        // case DELETE_QUERY:
-        //     // TODO: Move to another reducer
-        //     return {
-        //         name: 'xxx',
-        //         id: v4(),
-        //         nodes: [],
-        //         relationships: [],
-        //         predicates: [],
-        //         output: []
-        //     }
 
         case ADD_NODE:
             return {

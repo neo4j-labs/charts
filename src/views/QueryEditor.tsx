@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { Link, Redirect } from 'react-router-dom'
 
 import useSchema from '../hooks/use-schema';
@@ -8,9 +8,8 @@ import InitialNodeSelector from '../components/querybuilder/InitialNodeSelector'
 import Toolbar from '../components/querybuilder/Toolbar';
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../store'
-import { loadQuery, setName } from '../store/reducers/currentQuery';
-import { deleteQuery, updateQuery } from '../store/reducers/queries';
-
+import { deleteQuery, loadQuery, setName, updateQuery } from '../store/actions';
+import Loading from '../components/Loading';
 
 export default function QueryEditor({ history, match }) {
     const { loading, labels, types } = useSchema()
@@ -69,6 +68,10 @@ function QueryEditorForm({ history, labels, types }) {
 function QueryHeader() {
     const dispatch = useDispatch()
     const currentQuery = useSelector((state: RootState) => state.currentQuery)
+
+    if ( !currentQuery ) {
+        return <Loading />
+    }
 
     const setUpdatedName = name => dispatch(setName(name))
     const handleUpdateQueryClick = () => {

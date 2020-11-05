@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../store'
-import { addQuery, deleteQuery } from '../store/reducers/queries';
+import { addQuery, deleteQuery } from '../store/actions';
 import Button from '../components/forms/button'
 import Modal from '../components/modal';
 import Card from '../components/card';
@@ -86,7 +86,7 @@ export default function Queries({ history }) {
             {showAddForm && <Modal title="Add Query" onClose={handleHideAddFormClick}>
                 <form>
                     <div>
-                        <label htmlFor="description" className="block font-bold m-2">Description</label>
+                        <label htmlFor="description" className="block font-bold m-2">Query Name</label>
                         <input className="w-full rounded-md p-2 border border-gray-400 bg-white text-gray-600" type="text" value={name} onChange={handleNameChange} />
                     </div>
                     <div className="mt-4">

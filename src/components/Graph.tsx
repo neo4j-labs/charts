@@ -1,10 +1,7 @@
-/* eslint-disable */
-import Builder from '@neode/querybuilder';
-import React, { useEffect, useRef } from 'react'
+import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { TreeState, selectNode, selectRelationship } from '../store/reducers/currentQuery';
-import { conditions, directions, operators } from '../constants'
-import { Operator } from '@neode/querybuilder'
+import { selectNode, selectRelationship } from '../store/actions';
+
 import { RootState } from '../store';
 import { queryToCypher } from '../utils';
 
@@ -40,7 +37,7 @@ function TreeNode({ node }) {
     </ul> : null
 
     const thesePredicates = predicates.filter(p => p.alias === node.id).map(p => p.name)
-    const theseOutputs = output.filter(p => p.alias === node.id).map(p => p.name)
+    const theseOutputs = output.filter(p => p.alias === node.id).map(p => p.aggregate ? `${p.aggregate}(${p.name})` : p.name)
 
 
     return (

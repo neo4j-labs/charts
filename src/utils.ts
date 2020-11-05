@@ -1,18 +1,24 @@
 /* eslint-disable */
 import Builder, { Operator } from "@neode/querybuilder";
 import { directions, operators } from "./constants";
-
-import { TreeState } from "./store/reducers/currentQuery";
+import { Query } from "./store/actions";
 
 interface CypherOutput {
     cypher: string;
     params: Record<string, any>;
 }
 
-export function queryToCypher(query: string | TreeState): CypherOutput {
+export function queryToCypher(query: string | Query): CypherOutput {
+    if (  typeof query === 'string' ) {
+        return {
+            cypher: query,
+            params: {}
+        }
+    }
+
     const builder = new Builder()
 
-    const { nodes, relationships, predicates, output } = query as TreeState
+    const { nodes, relationships, predicates, output } = query as Query
     const endNodes = relationships.map(rel => rel.to)
 
     const root = nodes.find(node => !endNodes.includes(node.id))
@@ -111,7 +117,17 @@ export function queryToCypher(query: string | TreeState): CypherOutput {
     })
 
     output.map(output => {
-        builder.return(`${output.alias}.${output.name}`)
+        let field = `${output.alias}.${output.name}`
+
+        if ( output.aggregate ) {
+            field = `${output.aggregate}(${field})`
+        }
+
+        if ( output.as ) {
+            field += ` AS ${output.as}`
+        }
+
+        builder.return(field)
     })
 
     return builder.build()

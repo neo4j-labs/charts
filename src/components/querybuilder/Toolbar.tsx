@@ -1,8 +1,11 @@
+import { AggregationFunction } from '@neode/querybuilder'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Condition, conditions } from '../../constants'
+import { aggregateFunctions, Condition, conditions } from '../../constants'
 import { RootState } from '../../store'
-import { addRelationship, addPredicate, removePredicate, removeReturn, addReturn, removeRelationship, removeNode } from '../../store/reducers/currentQuery'
+import { addPredicate, addRelationship, addReturn, removeNode, removePredicate, removeRelationship, removeReturn } from '../../store/actions'
+import Tab from '../tab'
+
 
 function ToolbarHeader({ text }) {
     return <div className="toolbar-header bg-white p-4 font-bold text-gray-700 text-lg border-b border-gray-400">{text}</div>
@@ -102,7 +105,15 @@ function ReturnFields({ id }) {
 
     const theseFields = output.filter(p => p.alias === id)
         .map(row => <div className="flex justify-between" key={row.id}>
-            {row.name}
+            <div>
+                {row.aggregate && <span className="text-blue-700">{row.aggregate}(</span>}
+                <span className="font-bold">
+                {row.name}
+                </span>
+                {row.aggregate && <span className="text-blue-600">)</span>}
+                {row.as && <span className="text-green-600"> AS {row.as}</span>}
+
+            </div>
             <button className="p-2 rounded-sm border border-red-600 text-red-600 font-bold leading-none" onClick={() => handleRemoveClick(row.id)}>x</button>
         </div>)
 
@@ -118,10 +129,15 @@ function AddReturnForm({ id, properties }) {
     const dispatch = useDispatch()
 
     const [ name, setName ] = useState<string>(Object.keys(properties)[0])
+    const [ aggregate, setAggregate ] = useState<AggregationFunction | ''>('')
+    const [ as, setAs ] = useState<string>('')
 
     const handleAddReturn = () => {
         if ( name ) {
-            dispatch( addReturn({ alias: id, name }) )
+            dispatch( addReturn({ alias: id, name, as, aggregate: aggregate !== '' ? aggregate : undefined }) )
+
+            setAs('')
+            setAggregate('')
         }
     }
 
@@ -129,8 +145,21 @@ function AddReturnForm({ id, properties }) {
         <select className="p-2 rounded-md border border-gray-400 mb-2" value={name} onChange={e => setName(e.target.value)}>
             {Object.keys(properties).map((key) => <option key={key} value={key}>{key}</option>)}
         </select>
+        <input className="p-2 rounded-md border border-gray-400 mb-2" value={as} onChange={e => setAs(e.target.value)} placeholder="Alias Field?" />
+        <select className="p-2 rounded-md border border-gray-400 mb-2" value={aggregate} onChange={e => setAggregate(e.target.value as AggregationFunction)}>
+            <option value="">Aggregate?</option>
+            {aggregateFunctions.map(({ key, value, text }) => <option key={key} value={value}>{text}</option>)}
+        </select>
         <button className="px-4 py-2 rounded-md border font-bold border-blue-600 text-blue-600" onClick={handleAddReturn}>Add Return</button>
     </div>
+}
+
+function ToolbarTabs({ tabs }) {
+    return (
+        <div className="flex flex-row px-2 pt-4 mb-2 border-b border-gray-300">
+            {tabs.map((tab, index) => <Tab key={index} text={tab.text} active={tab.active} onClick={tab.onClick} />)}
+        </div>
+    )
 }
 
 function NodeToolbar(props) {
@@ -138,6 +167,7 @@ function NodeToolbar(props) {
     const selected = useSelector((state: RootState) => state.currentQuery.selected)
     const nodes = useSelector((state: RootState) => state.currentQuery.nodes)
     const thisNode = nodes.find(node => node.id === selected)
+    const [ tab, setTab ] = useState<string>('relationships')
 
     const thisLabel = thisNode && props.labels.find(label => label.label === thisNode!.label)
 
@@ -145,34 +175,54 @@ function NodeToolbar(props) {
 
     const handleRemoveClick = () => dispatch(removeNode(thisNode!.id))
 
-    const addRelationshipOptions = thisLabel.relationships.map(rel => rel.labels.map(label => ({
-        key: `${rel.type}||${rel.direction}||${label}`,
-        label,
-        ...rel,
-    })))
-        .reduce((acc, next) => acc.concat(next), [])
-        .map(rel => <ToolbarRelationship key={rel.key} from={selected} {...rel} />)
+    const tabs = [
+        { text: 'Relationships', active: tab === 'relationships', onClick: () => setTab('relationships') },
+        { text: 'Predicates', active: tab === 'predicates', onClick: () => setTab('predicates') },
+        { text: 'Return', active: tab === 'return', onClick: () => setTab('return') },
+    ]
+
+    let activeTab = <div></div>
+
+    if ( tab === 'predicates' )  {
+        activeTab = <div className="toolbar-predicates">
+            {/* <ToolbarSubheader text="Predicates" /> */}
+            <Predicates id={thisNode.id} />
+            <AddPredicateForm id={thisNode.id} properties={thisLabel.properties} />
+        </div>
+    }
+    else if ( tab === 'return' )  {
+        activeTab = <div className="toolbar-predicates">
+            {/* <ToolbarSubheader text="Return Fields" /> */}
+            <ReturnFields id={thisNode.id} />
+            <AddReturnForm id={thisNode.id} properties={thisLabel.properties} />
+        </div>
+    }
+    else if ( tab === 'relationships') {
+        const addRelationshipOptions = thisLabel.relationships.map(rel => rel.labels.map(label => ({
+            key: `${rel.type}||${rel.direction}||${label}`,
+            label,
+            ...rel,
+        })))
+            .reduce((acc, next) => acc.concat(next), [])
+            .map(rel => <ToolbarRelationship key={rel.key} from={selected} {...rel} />)
+
+        activeTab = (<div className="pt-2">
+            {/* <ToolbarSubheader text="Add Relationship" /> */}
+            <div className="px-2">
+                {addRelationshipOptions}
+            </div>
+        </div>)
+    }
 
 
     return <div className="toolbar flex-grow flex-shrink-0 node-toolbar h-full flex flex-col bg-white border-l border-gray-300" style={{width: '420px'}}>
         <ToolbarHeader text={`(${thisNode?.id}:${thisNode?.label})`} />
+
+        <ToolbarTabs tabs={tabs} />
+
         <div className="toolbar-scrollable flex flex-col flex-shrink flex-grow overflow-auto">
-            <ToolbarSubheader text="Predicates" />
-            <Predicates id={thisNode.id} />
-            <AddPredicateForm id={thisNode.id} properties={thisLabel.properties} />
-
-
-            <ToolbarSubheader text="Return Fields" />
-            <ReturnFields id={thisNode.id} />
-            <AddReturnForm id={thisNode.id} properties={thisLabel.properties} />
-
-
-            <ToolbarSubheader text="Add Relationship" />
-            <div className="px-2">
-                {addRelationshipOptions}
-            </div>
+            {activeTab}
         </div>
-        {/* <div className="flex flex-grow"></div> */}
         <ToolbarFooter handleRemoveClick={handleRemoveClick} removeText="Remove Node" />
     </div>
 }
@@ -185,6 +235,12 @@ function RelationshipToolbar(props) {
     const relationships = useSelector((state: RootState) => state.currentQuery.relationships)
     const thisRelationship = relationships.find(r => r.id === selected)
     const thisType = props.types.find(type => type.type === thisRelationship?.type)
+    const [ tab, setTab ] = useState<string>('predicates')
+
+    const tabs = [
+        { text: 'Predicates', active: tab === 'predicates', onClick: () => setTab('predicates') },
+        { text: 'Return', active: tab === 'return', onClick: () => setTab('return') },
+    ]
 
     if ( !thisType ) {
         return <div></div>
@@ -197,29 +253,40 @@ function RelationshipToolbar(props) {
 
     const text = `(${startNode?.id}:${startNode?.label})${thisRelationship?.direction === 'in' ? '<': ''}-[${thisRelationship?.id}:${thisRelationship?.type}]-${thisRelationship?.direction === 'out' ? '>': ''}(${endNode?.id}:${endNode?.label})`
 
-    const predicates = Object.keys(thisType.properties).length ? (
-    <div>
-        <ToolbarSubheader text="Predicates" />
-        <Predicates id={thisRelationship!.id} />
-        <AddPredicateForm id={thisRelationship!.id} properties={thisType.properties} />
-    </div>
-     ) : <div className="p-4">There are no properties on this relationship</div>
 
-    const returns = Object.keys(thisType.properties).length ? (
-    <div>
-        <ToolbarSubheader text="Return Fields" />
-        <ReturnFields id={thisRelationship!.id} />
-        <AddReturnForm id={thisRelationship!.id} properties={thisType.properties} />
-    </div>
-     ) : ''
+    let activeTab = <div></div>
 
-    return <div className="flex flex-col bg-white justify-between  border-l border-gray-300">
-    <ToolbarHeader text={text} />
-    <div className="flex flex-col flex-grow-0 overflow-auto" style={{width: '420px'}}>
+    if ( tab === 'predicates' ) {
+        activeTab = Object.keys(thisType.properties).length ? (
+            <div>
+                {/* <ToolbarSubheader text="Predicates" /> */}
+                <Predicates id={thisRelationship!.id} />
+                <AddPredicateForm id={thisRelationship!.id} properties={thisType.properties} />
+            </div>
+        ) : <div className="p-4">There are no properties on this relationship</div>
+    }
+    else if ( tab === 'return' ) {
+        activeTab = Object.keys(thisType.properties).length ? (
+        <div>
+            {/* <ToolbarSubheader text="Return Fields" /> */}
+            <ReturnFields id={thisRelationship!.id} />
+            <AddReturnForm id={thisRelationship!.id} properties={thisType.properties} />
+        </div>
+        ) : <div className="p-4">There are no properties to return this relationship</div>
+    }
+
+    return <div className="toolbar flex-grow flex-shrink-0 node-toolbar h-full flex flex-col bg-white border-l border-gray-300" style={{width: '420px'}}>
+        <ToolbarHeader text={text} />
+        <ToolbarTabs tabs={tabs} />
+        <div className="toolbar-scrollable flex flex-col flex-shrink flex-grow overflow-auto">
+            {activeTab}
+        </div>
+
+    {/* <div className="flex flex-col flex-grow-0 overflow-auto" style={{width: '420px'}}>
         {predicates}
         {returns}
     </div>
-    <div className="flex flex-grow"></div>
+    <div className="flex flex-grow"></div> */}
     <ToolbarFooter handleRemoveClick={handleRemoveClick} removeText="Remove Relationship" />
 </div>
 }

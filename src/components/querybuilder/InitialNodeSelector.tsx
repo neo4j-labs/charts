@@ -1,6 +1,6 @@
 import React from 'react'
 import { useDispatch } from 'react-redux'
-import { addNode } from '../../store/reducers/currentQuery'
+import { addNode } from '../../store/actions'
 
 export default function InitialNodeSelector(props) {
     const { labels } = props

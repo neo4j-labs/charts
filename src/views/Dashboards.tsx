@@ -3,21 +3,24 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { RootState } from '../store'
-import { addDashboard, deleteDashboard } from '../store/reducers/dashboards'
+import { addDashboard, deleteDashboard } from '../store/actions'
 import Button from '../components/forms/button'
 import Modal from '../components/modal'
 import Card from '../components/card'
 
 
-export default function Home({ history }) {
+export default function Dashboards({ history }) {
     const dispatch = useDispatch()
+    // @ts-ignore
     const dashboards = useSelector((n: RootState) => n.dashboards.dashboards)
 
     const [ showAddForm, setShowAddForm ] = useState<boolean>(false)
     const [ name, setName ] = useState<string>('')
     const [ description, setDescription ] = useState<string>('')
 
-    const handleShowAddClick = () => setShowAddForm(true)
+    const handleShowAddClick = () => {
+        setShowAddForm(true)
+    }
     const handleAddDashboardClick = () => {
         if ( name !== '' ) {
             dispatch(addDashboard(name, description))
@@ -69,6 +72,16 @@ export default function Home({ history }) {
 
                             </Card>
                         </div>)}
+
+                        {!dashboards || !dashboards.length && <div className="flex flex-col w-full">
+                        <div className="p-12 bg-white w-auto m-auto">
+                            <h2 className="font-bold text-xl text-center text-blue-600">Let's get exploring!</h2>
+                            <p className="mx-auto my-8 text-center">You can add a new dashboard by clicking the <strong>Add Dashboard</strong> button below</p>
+                            <div className="text-center">
+                                <Button size="md" colour="blue" text="Add Dashboard" onClick={handleShowAddClick} />
+                            </div>
+                        </div>
+                    </div>}
                     </div>
                 </div>
             </div>

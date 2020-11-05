@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, Redirect } from 'react-router-dom'
 import { RootState } from '../store'
-import { addReport, updateReport, deleteDashboard, deleteReport, updateDashboard } from '../store/reducers/dashboards'
+import { addReport, updateReport, deleteDashboard, deleteReport, updateDashboard } from '../store/actions'
 import { reportSources, reportTypes } from '../constants'
 import Button from '../components/forms/button'
 import Modal from '../components/modal'
@@ -38,7 +38,7 @@ function Report(props) {
         content = <ReportForm dashboard={props.dashboard} report={props} submitText="Update Report" onSubmit={handleUpdateReport} />
     }
     else if ( props.type === 'metric' ) {
-        content = <MetricReport query={props.query} />
+        content = <MetricReport {...props} />
     }
     else if ( props.type === 'table' ) {
         content = <MetricTable source={props.source} query={props.query} />
@@ -50,8 +50,6 @@ function Report(props) {
         </Card>
     )
 }
-
-
 
 function ReportForm({ dashboard, report, submitText, onSubmit }) {
     const queries = useSelector((state: RootState) => state.queries)
@@ -74,7 +72,7 @@ function ReportForm({ dashboard, report, submitText, onSubmit }) {
 
 
     return (
-        <form>
+        <form className="pr-2">
             <div>
                 <label htmlFor="name" className="block font-bold m-2">Name</label>
                 <input className="w-full rounded-md p-2 border border-gray-400 bg-white text-gray-600" id="name" type="text" value={name} onChange={e => setName(e.target.value)} />
@@ -102,6 +100,7 @@ function ReportForm({ dashboard, report, submitText, onSubmit }) {
                     <option></option>
                     {queries.map(query => <option key={query.id} value={query.id}>{query.name}</option>)}
                 </select>}
+                {source === 'query' && queries.find(q => query == q.id) && <Link className="mt-2 text-xs text-blue-600" to={`/queries/${query}`}>Edit Query</Link> }
             </div>
 
             <div className="mt-4">
@@ -147,7 +146,6 @@ export default function Dashboard({ match }) {
     }
 
     const handleShowAddReportClick = () => setShowAddReport(true)
-
 
     return (
         <div className="flex flex-col w-full">
@@ -278,10 +276,6 @@ export default function Dashboard({ match }) {
                             </div>
                         </div>
                     </div> */}
-
-
-
-
                 </div>
             </div>
 
@@ -298,7 +292,4 @@ export default function Dashboard({ match }) {
             {/* <pre>{JSON.stringify(reports, null, 2)}</pre> */}
         </div>
     )
-
-
-
 }

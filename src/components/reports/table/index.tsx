@@ -2,7 +2,7 @@ import React from "react"
 import { useSelector } from "react-redux";
 import { useReadCypher } from "use-neo4j"
 import { RootState } from "../../../store";
-import { TreeState } from "../../../store/reducers/currentQuery";
+import { Query } from "../../../store/actions";
 import { Source } from "../../../store/reducers/dashboards";
 import { queryToCypher } from "../../../utils";
 import Loading from "../../Loading"
@@ -18,13 +18,10 @@ export default function MetricTable(props: MetricTableProps) {
     const tree = useSelector((state: RootState) => state.queries.find(q => q.id === query))
 
     if ( source === 'query' ) {
-        const output = queryToCypher(tree as TreeState)
+        const output = queryToCypher(tree as Query)
 
         query = output.cypher
         params = output.params
-
-        console.log('::', query ,params);
-
     }
 
     const { error, loading, records, first } = useReadCypher(query, params)

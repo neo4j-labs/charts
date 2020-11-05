@@ -1,40 +1,12 @@
 import { v4 } from 'uuid'
-import { TreeState } from './currentQuery'
+import { saveQueries } from '../../persistence'
+import { ADD_QUERY, APP_INIT, DELETE_QUERY, Query, QueriesState, UPDATE_QUERY } from '../actions';
 
-const LOCAL_STORAGE_KEY = 'queries'
-
-const ADD_QUERY = 'ADD_QUERY'
-const UPDATE_QUERY = 'UPDATE_QUERY'
-const DELETE_QUERY = 'DELETE_QUERY'
-
-export function addQuery(name: string) {
-    return {
-        type: ADD_QUERY,
-        payload: { name },
-    }
-}
-
-export function deleteQuery(id: string) {
-    return {
-        type: DELETE_QUERY,
-        payload: { id },
-    }
-}
-
-export function updateQuery(payload: TreeState) {
-    return {
-        type: UPDATE_QUERY,
-        payload,
-    }
-}
-
-type QueriesState = TreeState[]
-
-const initialState: QueriesState = JSON.parse( window.localStorage.getItem(LOCAL_STORAGE_KEY) || '[]' )
-
-
-export default function queriesReducer(state: QueriesState = initialState, action) {
+export default function queriesReducer(state: QueriesState = [], action) {
     switch (action.type) {
+        case APP_INIT:
+            return action.payload.queries;
+
         case ADD_QUERY:
             state = state.concat({
                 id: v4(),
@@ -44,8 +16,8 @@ export default function queriesReducer(state: QueriesState = initialState, actio
                 predicates: [],
                 output: [],
                 ...action.payload,
-            } as TreeState)
-            break;
+            } as Query)
+            return saveQueries(state);
 
         case UPDATE_QUERY:
             state = state.filter(query => query.id !== action.payload.id)
@@ -53,19 +25,13 @@ export default function queriesReducer(state: QueriesState = initialState, actio
                 ...action.payload,
                 updated: false,
                 savedAt: new Date()
-            } as TreeState)
-
-        //     console.log('wtf', state);
-            break;
-
+            } as Query)
+            return saveQueries(state);
 
         case DELETE_QUERY:
             state = state.filter(query => query.id !== action.payload.id)
-            break;
+            return saveQueries(state);
     }
-
-    // Save state to local storage
-    window.localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state))
 
     return state
 }
