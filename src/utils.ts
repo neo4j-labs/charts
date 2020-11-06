@@ -1,6 +1,11 @@
 /* eslint-disable */
 import Builder, { Operator } from "@neode/querybuilder";
+import { QueryResult, Record as Neo4jRecord } from 'neo4j-driver'
+import { useSelector } from "react-redux";
+import { useReadCypher } from "use-neo4j";
+import ReportProps from "./components/reports/ReportProps";
 import { directions, operators } from "./constants";
+import { RootState } from "./store";
 import { Query } from "./store/actions";
 
 interface CypherOutput {
@@ -131,4 +136,50 @@ export function queryToCypher(query: string | Query): CypherOutput {
     })
 
     return builder.build()
+}
+
+
+export function useReportResults(props: ReportProps) {
+    const queries = useSelector((state: RootState) => state.queries)
+
+    let cypher = props.query
+    let params = {}
+
+    if ( props.source === 'query' ) {
+        const output = queryToCypher(queries.find(query => query.id === props.query))
+
+        cypher = output.cypher
+        params = output.params
+    }
+
+    return useReadCypher(cypher, params)
+}
+
+
+export function recordToNative(input: any): any {
+    if ( !input && input !== false ) {
+        return null
+    }
+    else if ( typeof input.keys === 'object' && typeof input.get === 'function' ) {
+        return Object.fromEntries(input.keys.map(key => [ key, recordToNative(input.get(key)) ]))
+    }
+    else if ( typeof input.toNumber === 'function' ) {
+        return input.toNumber()
+    }
+    else if ( Array.isArray(input) ) {
+        return (input as Array<any>).map(item => recordToNative(item))
+    }
+    else if ( typeof input === 'object' ) {
+        const converted = Object.entries(input).map(([ key, value ]) => [ key, recordToNative(value) ])
+
+        return Object.fromEntries(converted)
+    }
+
+    return input
+}
+
+export function resultToNative(result: QueryResult): Record<string, any> {
+    if (!result) return {}
+
+    return result.records.map(row => recordToNative(row))
 }

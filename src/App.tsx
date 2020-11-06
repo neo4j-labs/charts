@@ -2,15 +2,14 @@
 import React, { useEffect } from 'react';
 import Queries from './views/Queries'
 import QueryEditor from './views/QueryEditor'
-import { BrowserRouter as Router, Switch, Route, Redirect, Link } from 'react-router-dom'
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
 import './App.css';
 import Dashboard from './views/Dashboard';
 import Dashboards from './views/Dashboards';
 import { useSelector } from 'react-redux';
-
 import { getInitialState } from './persistence';
 import { RootState } from './store';
-
+import { version } from '../package.json'
 
 function App() {
   const ready = useSelector((state: RootState) => state.dashboards.ready)
@@ -34,7 +33,7 @@ function App() {
           <Link className="text-white px-4 py-6 hover:text-gray-200 hover:bg-gray-700" to="/">Dashboards</Link>
           <Link className="text-white px-4 py-6 hover:text-gray-200 hover:bg-gray-700" to="/queries">Queries</Link>
         </div>
-        <div className="flex flex-grow w-full bg-gray-100 overflow-auto">
+        <div className="flex flex-col flex-grow w-full bg-gray-100 overflow-auto">
           <Switch>
             <Route exact={true} path="/dashboards" component={Dashboards} />
             <Route exact={true} path="/queries" component={Queries} />
@@ -42,6 +41,20 @@ function App() {
             <Route path="/queries/:id" component={QueryEditor} />
             <Route path="*" component={Dashboards} />
           </Switch>
+
+          <div className="p-8">&nbsp;</div>
+
+          {/* <div className="mt-4 bg-blue-100 text-blue-800">
+            <div className="container mx-auto pt-8 pb-4 px-4 flex justify-between mb-12">
+              <div>
+                GraphPanel v{version} -
+                <a href="https://neo4j.com/labs" className="inline-block ml-2 font-bold text-purple-700">Neo4j Labs</a>
+              </div>
+              <div>
+                Is this graph app useful?
+              </div>
+            </div>
+          </div> */}
         </div>
       </Router>
     </div>

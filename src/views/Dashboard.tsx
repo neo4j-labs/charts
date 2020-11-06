@@ -1,15 +1,17 @@
 /* eslint-disable */
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, Redirect } from 'react-router-dom'
 import { RootState } from '../store'
 import { addReport, updateReport, deleteDashboard, deleteReport, updateDashboard } from '../store/actions'
-import { reportSources, reportTypes } from '../constants'
+import { reportSources, reportTypes, TYPE_BAR, TYPE_LINE, TYPE_METRIC, TYPE_TABLE, TYPE_STACKED_BAR, TYPE_HORIZONTAL_BAR, TYPE_HORIZONTAL_STACKED_BAR } from '../constants'
 import Button from '../components/forms/button'
 import Modal from '../components/modal'
 import Card from '../components/card'
 import MetricReport from '../components/reports/metric'
-import MetricTable from '../components/reports/table'
+import TableReport from '../components/reports/table'
+import LineReport from '../components/reports/line'
+import BarReport from '../components/reports/bar'
 
 function Report(props) {
     const [ tab, setTab ] = useState<string>('report')
@@ -37,15 +39,30 @@ function Report(props) {
     if ( tab === 'edit' ) {
         content = <ReportForm dashboard={props.dashboard} report={props} submitText="Update Report" onSubmit={handleUpdateReport} />
     }
-    else if ( props.type === 'metric' ) {
+    else if ( props.type === TYPE_METRIC ) {
         content = <MetricReport {...props} />
     }
-    else if ( props.type === 'table' ) {
-        content = <MetricTable source={props.source} query={props.query} />
+    else if ( props.type === TYPE_TABLE ) {
+        content = <TableReport source={props.source} query={props.query} />
+    }
+    else if ( props.type === TYPE_LINE ) {
+        content = <LineReport source={props.source} query={props.query} />
+    }
+    else if ( props.type === TYPE_BAR ) {
+        content = <BarReport source={props.source} query={props.query} />
+    }
+    else if ( props.type === TYPE_STACKED_BAR ) {
+        content = <BarReport source={props.source} query={props.query} stacked={true} />
+    }
+    else if ( props.type === TYPE_HORIZONTAL_BAR ) {
+        content = <BarReport source={props.source} query={props.query} layout="horizontal" />
+    }
+    else if ( props.type === TYPE_HORIZONTAL_STACKED_BAR ) {
+        content = <BarReport source={props.source} query={props.query} stacked={true} layout="horizontal" />
     }
 
     return (
-        <Card title={props.name} tabs={tabs} onTitleClick={() => setTab('report')}>
+        <Card title={props.name} titleActive={tab === 'report'} tabs={tabs} onTitleClick={() => setTab('report')}>
             {content}
         </Card>
     )

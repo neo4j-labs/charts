@@ -1,15 +1,7 @@
-
 import React from 'react'
-import { useSelector } from 'react-redux';
-import { useReadCypher } from "use-neo4j";
-import { RootState } from '../../store';
-import { queryToCypher } from '../../utils';
 
-interface MetricReportProps {
-    query: string;
-    source: string;
-}
-
+import { useReportResults } from '../../utils';
+import ReportProps from './ReportProps';
 
 function Loading() {
     return (
@@ -17,21 +9,8 @@ function Loading() {
     )
 }
 
-export default function MetricReport(props: MetricReportProps) {
-    const queries = useSelector((state: RootState) => state.queries)
-
-    let cypher = props.query
-    let params = {}
-
-    if ( props.source === 'query' ) {
-        const output = queryToCypher(queries.find(query => query.id === props.query))
-
-        cypher = output.cypher
-        params = output.params
-    }
-
-    const { loading, error, first } = useReadCypher(cypher, params)
-
+export default function MetricReport(props: ReportProps) {
+    const { loading, error, first } = useReportResults(props)
 
     if ( loading ) {
         return <Loading />

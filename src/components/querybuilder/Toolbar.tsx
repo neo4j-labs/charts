@@ -11,9 +11,9 @@ function ToolbarHeader({ text }) {
     return <div className="toolbar-header bg-white p-4 font-bold text-gray-700 text-lg border-b border-gray-400">{text}</div>
 }
 
-function ToolbarSubheader({ text }) {
-    return <div className="toolbar-subheader bg-white p-4 font-bold text-gray-600 border-b border-gray-200 mb-4">{text}</div>
-}
+// function ToolbarSubheader({ text }) {
+//     return <div className="toolbar-subheader bg-white p-4 font-bold text-gray-600 border-b border-gray-200 mb-4">{text}</div>
+// }
 
 function ToolbarRelationship(props) {
     const dispatch = useDispatch()
@@ -275,20 +275,16 @@ function RelationshipToolbar(props) {
         ) : <div className="p-4">There are no properties to return this relationship</div>
     }
 
-    return <div className="toolbar flex-grow flex-shrink-0 node-toolbar h-full flex flex-col bg-white border-l border-gray-300" style={{width: '420px'}}>
-        <ToolbarHeader text={text} />
-        <ToolbarTabs tabs={tabs} />
-        <div className="toolbar-scrollable flex flex-col flex-shrink flex-grow overflow-auto">
-            {activeTab}
+    return (
+        <div className="toolbar flex-grow flex-shrink-0 node-toolbar h-full flex flex-col bg-white border-l border-gray-300" style={{width: '420px'}}>
+            <ToolbarHeader text={text} />
+            <ToolbarTabs tabs={tabs} />
+            <div className="toolbar-scrollable flex flex-col flex-shrink flex-grow overflow-auto">
+                {activeTab}
+            </div>
+            <ToolbarFooter handleRemoveClick={handleRemoveClick} removeText="Remove Relationship" />
         </div>
-
-    {/* <div className="flex flex-col flex-grow-0 overflow-auto" style={{width: '420px'}}>
-        {predicates}
-        {returns}
-    </div>
-    <div className="flex flex-grow"></div> */}
-    <ToolbarFooter handleRemoveClick={handleRemoveClick} removeText="Remove Relationship" />
-</div>
+    )
 }
 
 function ToolbarFooter({ handleRemoveClick, removeText }) {

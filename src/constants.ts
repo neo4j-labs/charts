@@ -29,11 +29,22 @@ export const reportSources = [
     { key: 'query', value: 'query', text: 'Query from Query Builder', },
 ]
 
+export const TYPE_METRIC = 'metric'
+export const TYPE_TABLE = 'table'
+export const TYPE_BAR = 'bar'
+export const TYPE_STACKED_BAR = 'stackedbar'
+export const TYPE_HORIZONTAL_BAR = 'horizontalbar'
+export const TYPE_HORIZONTAL_STACKED_BAR = 'horizontalstackedbar'
+export const TYPE_LINE = 'line'
+
 export const reportTypes = [
-    { key: 'metric', value: 'metric', text: 'Metric', },
-    { key: 'table', value: 'table', text: 'Table', },
-    { key: 'bar', value: 'bar', text: 'bar', },
-    { key: 'line', value: 'line', text: 'line', },
+    { key: 'metric', value: TYPE_METRIC, text: 'Metric', },
+    { key: 'table', value: TYPE_TABLE, text: 'Table', },
+    { key: 'bar', value: TYPE_BAR, text: 'Bar Chart', },
+    { key: 'stackedbar', value: TYPE_STACKED_BAR, text: 'Stacked Bar Chart', },
+    { key: 'horizontalbar', value: TYPE_HORIZONTAL_BAR, text: 'Horizontal Bar Chart', },
+    { key: 'horizontalstackedbar', value: TYPE_HORIZONTAL_STACKED_BAR, text: 'Horizontal Stacked Bar Chart', },
+    { key: 'line', value: TYPE_LINE, text: 'Line Chart', },
     { key: 'etc', value: 'etc', text: 'etc', },
 ]
 
