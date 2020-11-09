@@ -26,12 +26,12 @@ const footer = () => {
   </div>)
 }
 
-const driver = createDriver('neo4j', 'localhost', 7687, 'neo4j', 'neo')
+// const driver = createDriver('neo4j', 'localhost', 7687, 'neo4j', 'neo')
 
 ReactDOM.render(
   <React.StrictMode>
     <ReduxProvider store={store}>
-      <Neo4jProvider driver={driver} logo={logo()} footer={footer()}>
+      <Neo4jProvider logo={logo()} footer={footer()}>
         <App />
       </Neo4jProvider>
     </ReduxProvider>

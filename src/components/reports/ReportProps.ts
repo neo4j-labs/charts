@@ -1,4 +1,5 @@
 export default interface ReportProps {
+    database?: string;
     query: string;
     source: string;
 }

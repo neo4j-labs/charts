@@ -1,6 +1,6 @@
 {
   "name": "@graphapps/graphpanel",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "homepage": "./",
   "dependencies": {
@@ -32,12 +32,12 @@
     "semantic-ui-react": "^2.0.0",
     "tailwindcss": "^1.9.6",
     "typescript": "~3.7.2",
-    "use-neo4j": "^0.2.25",
+    "use-neo4j": "^0.2.30",
     "uuid": "^8.3.1"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && mv build dist",
+    "build": "rimraf dist && react-scripts build && mv build dist",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "watch:css": "postcss src/index.css -o src/assets/main.css"
@@ -61,6 +61,7 @@
     "@fullhuman/postcss-purgecss": "^3.0.0",
     "@types/d3": "^5.16.3",
     "postcss": "^8.1.4",
-    "redux-devtools": "^3.7.0"
+    "redux-devtools": "^3.7.0",
+    "rimraf": "^3.0.2"
   }
 }

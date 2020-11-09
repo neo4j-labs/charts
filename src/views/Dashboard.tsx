@@ -23,8 +23,8 @@ function Report(props) {
         }
     }
 
-    const handleUpdateReport = (dashboard, name, type, source, query, columns) => {
-        dispatch(updateReport(props.id, dashboard, name, type, source, query, columns, props.order))
+    const handleUpdateReport = (dashboard, name, database, type, source, query, columns) => {
+        dispatch(updateReport(props.id, dashboard, name, database, type, source, query, columns, props.order))
 
         setTab('report')
     }
@@ -43,22 +43,22 @@ function Report(props) {
         content = <MetricReport {...props} />
     }
     else if ( props.type === TYPE_TABLE ) {
-        content = <TableReport source={props.source} query={props.query} />
+        content = <TableReport source={props.source} query={props.query} database={props.database} />
     }
     else if ( props.type === TYPE_LINE ) {
-        content = <LineReport source={props.source} query={props.query} />
+        content = <LineReport source={props.source} query={props.query} database={props.database} />
     }
     else if ( props.type === TYPE_BAR ) {
-        content = <BarReport source={props.source} query={props.query} />
+        content = <BarReport source={props.source} query={props.query} database={props.database} />
     }
     else if ( props.type === TYPE_STACKED_BAR ) {
-        content = <BarReport source={props.source} query={props.query} stacked={true} />
+        content = <BarReport source={props.source} query={props.query} database={props.database} stacked={true} />
     }
     else if ( props.type === TYPE_HORIZONTAL_BAR ) {
-        content = <BarReport source={props.source} query={props.query} layout="horizontal" />
+        content = <BarReport source={props.source} query={props.query} database={props.database} layout="horizontal" />
     }
     else if ( props.type === TYPE_HORIZONTAL_STACKED_BAR ) {
-        content = <BarReport source={props.source} query={props.query} stacked={true} layout="horizontal" />
+        content = <BarReport source={props.source} query={props.query} database={props.database} stacked={true} layout="horizontal" />
     }
 
     return (
@@ -76,6 +76,7 @@ function ReportForm({ dashboard, report, submitText, onSubmit }) {
     const [type, setType] = useState<string>(report.type || reportTypes[0].value)
     const [source, setSource] = useState<string>(report.source || reportSources[0].value)
     const [query, setQuery] = useState<string>(report.query || '')
+    const [database, setDatabase] = useState<string>(report.database || '')
 
     const handleSubmit = () => {
         // Validate Query Type
@@ -84,7 +85,7 @@ function ReportForm({ dashboard, report, submitText, onSubmit }) {
             return
         }
 
-        onSubmit(dashboard, name, type, source, query, columns)
+        onSubmit(dashboard, name, database, type, source, query, columns)
     }
 
 
@@ -101,6 +102,11 @@ function ReportForm({ dashboard, report, submitText, onSubmit }) {
                 </select>
 
                 <div className="p-2 mb-2 text-gray-600 text-sm">{getHint(type)}</div>
+            </div>
+            <div>
+                <label htmlFor="database" className="block font-bold m-2">Database</label>
+                <input className="w-full rounded-md p-2 border border-gray-400 bg-white text-gray-600" id="database" type="text" placeholder="(Default database)" value={database} onChange={e => setDatabase(e.target.value)} />
+                <div className="p-2 mb-2 text-gray-600 text-sm">Leave blank to use the default database.</div>
             </div>
             <div>
                 <label htmlFor="columns" className="block font-bold m-2">Columns</label>
@@ -158,8 +164,8 @@ export default function Dashboard({ match }) {
     }
 
 
-    const handleAddReport = (dashboard, name, type, source, query, columns) => {
-        dispatch( addReport(dashboard, name, type, source, query, columns) )
+    const handleAddReport = (dashboard, name, database, type, source, query, columns) => {
+        dispatch( addReport(dashboard, name, database, type, source, query, columns) )
 
         setShowAddReport(false)
     }

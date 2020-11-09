@@ -103,12 +103,13 @@ export function deleteDashboard(id: string) {
     }
 }
 
-export function addReport(dashboard: string, name: string, type: string, source: string, query: string, columns: number) {
+export function addReport(dashboard: string, name: string, database: string | undefined, type: string, source: string, query: string, columns: number) {
     return {
         type: ADD_REPORT,
         payload: {
             dashboard,
             name,
+            database,
             type,
             source,
             query,
@@ -117,13 +118,14 @@ export function addReport(dashboard: string, name: string, type: string, source:
     }
 }
 
-export function updateReport(id: string, dashboard: string, name: string, type: string, source: string, query: string, columns: number, order: number) {
+export function updateReport(id: string, dashboard: string, name: string, database: string | undefined,  type: string, source: string, query: string, columns: number, order: number) {
     return {
         type: UPDATE_REPORT,
         payload: {
             id,
             dashboard,
             name,
+            database,
             type,
             source,
             query,

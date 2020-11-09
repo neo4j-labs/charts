@@ -5,6 +5,7 @@ import Loading from "../../Loading"
 
 
 interface MetricTableProps {
+    database?: string;
     source: Source;
     query: string;
     params?: Record<string, any>;

@@ -23,7 +23,8 @@ export default function MetricReport(props: ReportProps) {
     }
     else {
         try {
-            let number = first!.get('count')
+            const key: string = first!.keys[0]
+            let number = first!.get(key)
 
             if ( typeof number.toNumber === 'function' ) number = number.toNumber()
 

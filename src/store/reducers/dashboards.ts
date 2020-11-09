@@ -16,6 +16,7 @@ export interface Dashboard {
 export interface Report {
     id: string;
     dashboard: string;
+    database?: string;
     name: string;
     order: number;
     savedAt: Date;
