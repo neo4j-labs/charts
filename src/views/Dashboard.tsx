@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Link, Redirect } from 'react-router-dom'
 import { RootState } from '../store'
 import { addReport, updateReport, deleteDashboard, deleteReport, updateDashboard } from '../store/actions'
-import { reportSources, reportTypes, TYPE_BAR, TYPE_LINE, TYPE_METRIC, TYPE_TABLE, TYPE_STACKED_BAR, TYPE_HORIZONTAL_BAR, TYPE_HORIZONTAL_STACKED_BAR } from '../constants'
+import { reportSources, reportTypes, TYPE_BAR, TYPE_LINE, TYPE_METRIC, TYPE_TABLE, TYPE_STACKED_BAR, TYPE_HORIZONTAL_BAR, TYPE_HORIZONTAL_STACKED_BAR, getHint } from '../constants'
 import Button from '../components/forms/button'
 import Modal from '../components/modal'
 import Card from '../components/card'
@@ -99,6 +99,8 @@ function ReportForm({ dashboard, report, submitText, onSubmit }) {
                 <select className="w-full rounded-md p-2 border border-gray-400 bg-white text-gray-600" id="type" value={type} onChange={e => setType(e.target.value)}>
                     {reportTypes.map(type => <option key={type.key} value={type.value}>{type.text}</option>)}
                 </select>
+
+                <div className="p-2 mb-2 text-gray-600 text-sm">{getHint(type)}</div>
             </div>
             <div>
                 <label htmlFor="columns" className="block font-bold m-2">Columns</label>

@@ -38,15 +38,18 @@ export const TYPE_HORIZONTAL_STACKED_BAR = 'horizontalstackedbar'
 export const TYPE_LINE = 'line'
 
 export const reportTypes = [
-    { key: 'metric', value: TYPE_METRIC, text: 'Metric', },
-    { key: 'table', value: TYPE_TABLE, text: 'Table', },
-    { key: 'bar', value: TYPE_BAR, text: 'Bar Chart', },
-    { key: 'stackedbar', value: TYPE_STACKED_BAR, text: 'Stacked Bar Chart', },
-    { key: 'horizontalbar', value: TYPE_HORIZONTAL_BAR, text: 'Horizontal Bar Chart', },
-    { key: 'horizontalstackedbar', value: TYPE_HORIZONTAL_STACKED_BAR, text: 'Horizontal Stacked Bar Chart', },
-    { key: 'line', value: TYPE_LINE, text: 'Line Chart', },
-    { key: 'etc', value: 'etc', text: 'etc', },
+    { key: 'metric', value: TYPE_METRIC, text: 'Metric', hint: 'A Metric Report looks for a `count` key on the first row', },
+    { key: 'table', value: TYPE_TABLE, text: 'Table', hint: 'You can return any type of data in a Table report', },
+    { key: 'bar', value: TYPE_BAR, text: 'Bar Chart', hint: 'A Bar chart expects three keys: the `index` which represents the data series, the `key` which represents the X axis and a numerical `value` which is plotted on the Y axis.', },
+    { key: 'stackedbar', value: TYPE_STACKED_BAR, text: 'Stacked Bar Chart', hint: 'A Stacked Bar chart expects three keys: the `index` which represents the data series, the `key` which represents the X axis and a numerical `value` which is plotted on the Y axis.  These items are stacked on top of each other.', },
+    { key: 'horizontalbar', value: TYPE_HORIZONTAL_BAR, text: 'Horizontal Bar Chart', hint: 'A Horizontal Bar chart expects three keys: the `index` which represents the data series, the `key` which represents the X axis and a numerical `value` which is plotted on the Y axis.',  },
+    { key: 'horizontalstackedbar', value: TYPE_HORIZONTAL_STACKED_BAR, text: 'Horizontal Stacked Bar Chart', hint: 'A Stacked Horizontal Bar chart expects three keys: the `index` which represents the data series, the `key` which represents the X axis and a numerical `value` which is plotted on the Y axis.  These items are stacked next to each other.', },
+    { key: 'line', value: TYPE_LINE, text: 'Line Chart', hint: 'A Line chart takes the first item returned as the key and plots all other data points on the chart.  Remember to order your results by date.', },
 ]
+
+export function getHint(type: string) {
+    return reportTypes.find(row => row.value === type)!.hint
+}
 
 interface AggregationFunctionOption {
     key: string;
