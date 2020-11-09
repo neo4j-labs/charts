@@ -8,6 +8,8 @@ import { addQuery, deleteQuery } from '../store/actions';
 import Button from '../components/forms/button'
 import Modal from '../components/modal';
 import Card from '../components/card';
+import Column from '../components/grid/Column';
+import ColdStart from '../components/ColdStart';
 
 export default function Queries({ history }) {
     const dispatch = useDispatch()
@@ -57,28 +59,24 @@ export default function Queries({ history }) {
                 <div className="container m-auto">
                     <div className="flex flex-row flex-wrap pt-8">
 
-                        {queries.map(query => (<div className="w-1/4 p-2" key={query.id}>
-                            <Card title={query.name} onTitleClick={() => goToQuery(query.id)} tabs={[{ text: 'Delete', onClick: () => handleDeleteQueryClick(query.id) }]}>
-                                <div className="flex flex-grow overflow-auto">
-                                    {/* {query} */}
-                                </div>
-                                <div className="flex flex-grow-0 justify-end">
-                                    <Link to={`/queries/${query.id}`} className="px-4 py-2 bg-white border border-blue-600 text-blue-600 rounded-md hover:bg-blue-100">
-                                        View Query
-                                </Link>
-                                </div>
-                            </Card>
-                        </div>))}
+                        {queries.map(query => (
+                            <Column columns={1} key={query.id}>
+                                <Card
+                                    title={query.name}
+                                    onTitleClick={() => goToQuery(query.id)}
+                                    tabs={[{ text: 'Delete', onClick: () => handleDeleteQueryClick(query.id) }]}
+                                    actions={ [ {text: 'View Query', to: `/queries/${query.id}`} ] }
+                                />
+                            </Column>
+                        ))}
 
-                        {!queries.length && <div className="flex flex-col w-full">
-                            <div className="p-12 bg-white w-auto m-auto">
-                                <h2 className="font-bold text-xl text-center text-blue-600">Let's get exploring!</h2>
-                                <p className="mx-auto my-8 text-center">You can add a new query by clicking the <strong>Add Query</strong> button below</p>
-                                <div className="text-center">
-                                    <Button size="md" colour="blue" text="Add Query" onClick={handleShowAddFormClick} />
-                                </div>
-                            </div>
-                        </div>}
+                        {!queries.length && <ColdStart
+                            title="Let's get exploring!"
+                            buttonText="Add Query"
+                            onButtonClick={handleShowAddFormClick}
+                        >
+                            <p className="mx-auto my-8 text-center">You can add a new query by clicking the <strong>Add Query</strong> button below</p>
+                        </ColdStart>}
                     </div>
                 </div>
             </div>

@@ -9,7 +9,7 @@ interface ModalProps {
 
 export default function Modal(props: ModalProps) {
     return (
-        <div className="fixed inset-0 bg-gray-400 bg-opacity-75 flex flex-col justify-center">
+        <div className="fixed inset-0 bg-gray-400 bg-opacity-75 flex flex-col justify-center z-20">
             <div className="modal-underlay fixed inset-0 bg-gray-400 bg-opacity-75" onClick={props.onClose} />
 
             <div className="flex flex-row justify-center z-20">

@@ -7,6 +7,8 @@ import { addDashboard, deleteDashboard } from '../store/actions'
 import Button from '../components/forms/button'
 import Modal from '../components/modal'
 import Card from '../components/card'
+import Column from '../components/grid/Column'
+import ColdStart from '../components/ColdStart'
 
 
 export default function Dashboards({ history }) {
@@ -59,29 +61,24 @@ export default function Dashboards({ history }) {
             <div className="w-full">
                 <div className="container m-auto">
                     <div className="flex flex-row flex-wrap pt-8">
-                        {dashboards && dashboards.map(dashboard => <div className="w-1/4 p-2" key={dashboard.id}>
-                            <Card title={dashboard.name} onTitleClick={() => goToDashboard(dashboard.id)} tabs={ [ { text: 'Delete', onClick: () => handleDeleteDashboardClick(dashboard.id) } ] }>
-                                <div className="flex flex-grow">
-                                {dashboard.description}
-                                </div>
-                                <div className="flex flex-grow-0 justify-end">
-                                    <Link to={`/dashboards/${dashboard.id}`} className="px-4 py-2 bg-white border border-blue-600 text-blue-600 rounded-md hover:bg-blue-100">
-                                        View Dashboard
-                                    </Link>
-                                </div>
-
+                        {dashboards && dashboards.map(dashboard => <Column columns={1} key={dashboard.id}>
+                            <Card
+                                title={dashboard.name}
+                                onTitleClick={() => goToDashboard(dashboard.id)}
+                                tabs={ [ { text: 'Delete', onClick: () => handleDeleteDashboardClick(dashboard.id) } ] }
+                                actions={ [ {text: 'View Dashboard', to: `/dashboards/${dashboard.id}`} ] }
+                            >
+                                    {dashboard.description}
                             </Card>
-                        </div>)}
+                        </Column>)}
 
-                        {!dashboards || !dashboards.length && <div className="flex flex-col w-full">
-                        <div className="p-12 bg-white w-auto m-auto">
-                            <h2 className="font-bold text-xl text-center text-blue-600">Let's get exploring!</h2>
+                        {!dashboards || !dashboards.length && <ColdStart
+                            title="Let's get exploring!"
+                            buttonText="Add Dashboard"
+                            onButtonClick={handleShowAddClick}
+                        >
                             <p className="mx-auto my-8 text-center">You can add a new dashboard by clicking the <strong>Add Dashboard</strong> button below</p>
-                            <div className="text-center">
-                                <Button size="md" colour="blue" text="Add Dashboard" onClick={handleShowAddClick} />
-                            </div>
-                        </div>
-                    </div>}
+                        </ColdStart>}
                     </div>
                 </div>
             </div>

@@ -12,6 +12,7 @@ import MetricReport from '../components/reports/metric'
 import TableReport from '../components/reports/table'
 import LineReport from '../components/reports/line'
 import BarReport from '../components/reports/bar'
+import Column from '../components/grid/Column'
 
 function Report(props) {
     const [ tab, setTab ] = useState<string>('report')
@@ -88,7 +89,6 @@ function ReportForm({ dashboard, report, submitText, onSubmit }) {
         onSubmit(dashboard, name, database, type, source, query, columns)
     }
 
-
     return (
         <form className="pr-2">
             <div>
@@ -125,7 +125,7 @@ function ReportForm({ dashboard, report, submitText, onSubmit }) {
                     <option></option>
                     {queries.map(query => <option key={query.id} value={query.id}>{query.name}</option>)}
                 </select>}
-                {source === 'query' && queries.find(q => query == q.id) && <Link className="mt-2 text-xs text-blue-600" to={`/queries/${query}`}>Edit Query</Link> }
+                {source === 'query' && queries.find(q => query == q.id) && <Link className="mt-2 px-2 text-xs text-blue-600" to={`/queries/${query}`}>Edit Query</Link> }
             </div>
 
             <div className="mt-4">
@@ -200,9 +200,8 @@ export default function Dashboard({ match }) {
                 </div>
             </div>
 
-            <div className="container mx-auto">
+            <div className="container mx-auto pb-16">
                 <div className="px-8 py-8">
-
                 {showAddReport && <Modal title="Add Report" onClose={() => setShowAddReport(false)}><ReportForm dashboard={dashboard.id} submitText="Add Report" onSubmit={handleAddReport} report={{}} /></Modal>}
 
                     <input type="text" className="font-bold text-gray-800 py-2 mb-2 bg-transparent border-b border-transparent focus:border-blue-400 focus:outline-none w-full" style={{ fontSize: '2rem' }} value={name} onChange={e => setName(e.target.value)} />
@@ -218,9 +217,9 @@ export default function Dashboard({ match }) {
                 </div>
 
                 <div className="flex flex-row flex-wrap">
-                    {reports.map(report => <div className={`w-${report.columns == 4 ? 'full' : `${report.columns}/4 `} p-2`} key={report.id}>
+                    {reports.map(report => <Column columns={report.columns} key={report.id}>
                         <Report {...report} />
-                    </div>)}
+                    </Column>)}
 
                     {!reports.length && <div className="flex flex-col w-full">
                         <div className="p-12 bg-white w-auto m-auto">

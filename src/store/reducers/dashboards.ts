@@ -1,5 +1,4 @@
 import { v4 } from 'uuid'
-import Dashboard from '../../views/Dashboard';
 import { neo4jDesktopGraphAppId } from '../../desktop/client';
 import { saveDashboards } from '../../persistence';
 import { ADD_DASHBOARD, ADD_REPORT, APP_INIT, DELETE_DASHBOARD, DELETE_REPORT, UPDATE_DASHBOARD, UPDATE_REPORT } from '../actions';

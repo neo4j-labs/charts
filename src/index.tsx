@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { createDriver, Neo4jProvider } from 'use-neo4j';
+import { Driver } from 'neo4j-driver'
 import appLogo from './logo.svg'
 import { version } from 'use-neo4j/package.json'
 import 'semantic-ui-css/semantic.min.css'
@@ -12,6 +13,7 @@ import './index.css';
 import store from './store';
 
 import { Provider as ReduxProvider } from 'react-redux'
+import { Neo4jScheme } from 'use-neo4j/dist/neo4j-config.interface';
 
 const logo = () => {
   return (<div className="logo"><img src={appLogo} alt="logo" /></div>)
@@ -26,12 +28,22 @@ const footer = () => {
   </div>)
 }
 
-// const driver = createDriver('neo4j', 'localhost', 7687, 'neo4j', 'neo')
+let driver: Driver | undefined = undefined
+
+if ( process.env.REACT_APP_NEO4J_SCHEME ) {
+  driver = createDriver(
+    process.env.REACT_APP_NEO4J_SCHEME as Neo4jScheme,
+    process.env.REACT_APP_NEO4J_HOST as string,
+    process.env.REACT_APP_NEO4J_PORT as string,
+    process.env.REACT_APP_NEO4J_USERNAME as string,
+    process.env.REACT_APP_NEO4J_PASSWORD as string
+  )
+}
 
 ReactDOM.render(
   <React.StrictMode>
     <ReduxProvider store={store}>
-      <Neo4jProvider logo={logo()} footer={footer()}>
+      <Neo4jProvider driver={driver} logo={logo()} footer={footer()}>
         <App />
       </Neo4jProvider>
     </ReduxProvider>

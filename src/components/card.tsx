@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import Tab from './tab'
 
 interface CardTab {
@@ -7,12 +8,18 @@ interface CardTab {
     onClick: () => void;
 }
 
+interface Action {
+    to: string | Record<string, any>;
+    text: string;
+}
+
 interface CardProps {
     title?: string;
     titleActive?: boolean;
     onTitleClick?: () => void;
     tabs?: CardTab[];
-    children: any;
+    children?: any;
+    actions?: Action[]
 }
 
 export default function Card(props: CardProps) {
@@ -34,6 +41,12 @@ export default function Card(props: CardProps) {
             <div className="flex flex-col h-64 overflow-auto text-gray-600">
                 {props.children}
             </div>
+
+            {props.actions?.length && <div className="flex flex-grow-0 justify-end border-t border-gray-200 pt-3">
+                {props.actions.map(action => <Link key={action.text} to={action.to} className="px-4 py-2 bg-white border border-blue-600 text-blue-600 rounded-md hover:bg-blue-100">
+                    {action.text}
+                </Link>)}
+            </div>}
         </div>
     )
 }

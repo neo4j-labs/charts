@@ -177,7 +177,7 @@ function NodeToolbar(props) {
 
     const tabs = [
         { text: 'Relationships', active: tab === 'relationships', onClick: () => setTab('relationships') },
-        { text: 'Predicates', active: tab === 'predicates', onClick: () => setTab('predicates') },
+        { text: 'Where', active: tab === 'predicates', onClick: () => setTab('predicates') },
         { text: 'Return', active: tab === 'return', onClick: () => setTab('return') },
     ]
 
