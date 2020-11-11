@@ -151,8 +151,6 @@ export function useReportResults(props: ReportProps) {
         cypher = output.cypher
         params = output.params
     }
-    console.log('???', props, props.database);
-
 
     return useReadCypher(cypher, params, props.database)
 }

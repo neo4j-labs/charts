@@ -3,138 +3,13 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, Redirect } from 'react-router-dom'
 import { RootState } from '../store'
-import { addReport, updateReport, deleteDashboard, deleteReport, updateDashboard } from '../store/actions'
-import { reportSources, reportTypes, TYPE_BAR, TYPE_LINE, TYPE_METRIC, TYPE_TABLE, TYPE_STACKED_BAR, TYPE_HORIZONTAL_BAR, TYPE_HORIZONTAL_STACKED_BAR, getHint } from '../constants'
+import { addReport, deleteDashboard, updateDashboard } from '../store/actions'
 import Button from '../components/forms/button'
 import Modal from '../components/modal'
-import Card from '../components/card'
-import MetricReport from '../components/reports/metric'
-import TableReport from '../components/reports/table'
-import LineReport from '../components/reports/line'
-import BarReport from '../components/reports/bar'
 import Column from '../components/grid/Column'
-
-function Report(props) {
-    const [ tab, setTab ] = useState<string>('report')
-    const dispatch = useDispatch()
-
-    const handleDelete = () => {
-        if ( confirm('Are you sure you want to delete this report?') ) {
-            dispatch(deleteReport(props.id))
-        }
-    }
-
-    const handleUpdateReport = (dashboard, name, database, type, source, query, columns) => {
-        dispatch(updateReport(props.id, dashboard, name, database, type, source, query, columns, props.order))
-
-        setTab('report')
-    }
-
-    const tabs = [
-        { text: 'Edit', active: tab === 'edit', onClick: () => setTab('edit') },
-        { text: 'Delete', onClick: () => handleDelete() },
-    ]
-
-    let content = <pre>{JSON.stringify(props, null, 2)}</pre>;
-
-    if ( tab === 'edit' ) {
-        content = <ReportForm dashboard={props.dashboard} report={props} submitText="Update Report" onSubmit={handleUpdateReport} />
-    }
-    else if ( props.type === TYPE_METRIC ) {
-        content = <MetricReport {...props} />
-    }
-    else if ( props.type === TYPE_TABLE ) {
-        content = <TableReport source={props.source} query={props.query} database={props.database} />
-    }
-    else if ( props.type === TYPE_LINE ) {
-        content = <LineReport source={props.source} query={props.query} database={props.database} />
-    }
-    else if ( props.type === TYPE_BAR ) {
-        content = <BarReport source={props.source} query={props.query} database={props.database} />
-    }
-    else if ( props.type === TYPE_STACKED_BAR ) {
-        content = <BarReport source={props.source} query={props.query} database={props.database} stacked={true} />
-    }
-    else if ( props.type === TYPE_HORIZONTAL_BAR ) {
-        content = <BarReport source={props.source} query={props.query} database={props.database} layout="horizontal" />
-    }
-    else if ( props.type === TYPE_HORIZONTAL_STACKED_BAR ) {
-        content = <BarReport source={props.source} query={props.query} database={props.database} stacked={true} layout="horizontal" />
-    }
-
-    return (
-        <Card title={props.name} titleActive={tab === 'report'} tabs={tabs} onTitleClick={() => setTab('report')}>
-            {content}
-        </Card>
-    )
-}
-
-function ReportForm({ dashboard, report, submitText, onSubmit }) {
-    const queries = useSelector((state: RootState) => state.queries)
-
-    const [name, setName] = useState<string>(report.name || '')
-    const [columns, setColumns] = useState<number>(report.columns || 1)
-    const [type, setType] = useState<string>(report.type || reportTypes[0].value)
-    const [source, setSource] = useState<string>(report.source || reportSources[0].value)
-    const [query, setQuery] = useState<string>(report.query || '')
-    const [database, setDatabase] = useState<string>(report.database || '')
-
-    const handleSubmit = () => {
-        // Validate Query Type
-        if ( name === '' || query === '' || (source === 'query' && !queries.find(q => q.id === query)) ) {
-            console.log('invalid payload');
-            return
-        }
-
-        onSubmit(dashboard, name, database, type, source, query, columns)
-    }
-
-    return (
-        <form className="pr-2">
-            <div>
-                <label htmlFor="name" className="block font-bold m-2">Name</label>
-                <input className="w-full rounded-md p-2 border border-gray-400 bg-white text-gray-600" id="name" type="text" value={name} onChange={e => setName(e.target.value)} />
-            </div>
-            <div>
-                <label htmlFor="type" className="block font-bold m-2">Type</label>
-                <select className="w-full rounded-md p-2 border border-gray-400 bg-white text-gray-600" id="type" value={type} onChange={e => setType(e.target.value)}>
-                    {reportTypes.map(type => <option key={type.key} value={type.value}>{type.text}</option>)}
-                </select>
-
-                <div className="p-2 mb-2 text-gray-600 text-sm">{getHint(type)}</div>
-            </div>
-            <div>
-                <label htmlFor="database" className="block font-bold m-2">Database</label>
-                <input className="w-full rounded-md p-2 border border-gray-400 bg-white text-gray-600" id="database" type="text" placeholder="(Default database)" value={database} onChange={e => setDatabase(e.target.value)} />
-                <div className="p-2 mb-2 text-gray-600 text-sm">Leave blank to use the default database.</div>
-            </div>
-            <div>
-                <label htmlFor="columns" className="block font-bold m-2">Columns</label>
-                <input className="w-full rounded-md p-2 border border-gray-400 bg-white text-gray-600" id="columns" type="number" min={1} max={4} value={columns} onChange={e => setColumns(parseInt(e.target.value))} />
-            </div>
-            <div>
-                <label htmlFor="source" className="block font-bold m-2">source</label>
-                <select className="w-full rounded-md p-2 border border-gray-400 bg-white text-gray-600" id="source" value={source} onChange={e => setSource(e.target.value)}>
-                    {reportSources.map(source => <option key={source.key} value={source.value}>{source.text}</option>)}
-                </select>
-            </div>
-            <div>
-                <label htmlFor="query" className="block font-bold m-2">query</label>
-                {source === 'cypher' && <textarea className="w-full rounded-sm p-2 border border-gray-400 bg-white text-gray-600" id="query" rows={4} value={query} onChange={e => setQuery(e.target.value)} />}
-                {source === 'query' && <select className="w-full rounded-sm p-2 border border-gray-400 bg-white text-gray-600" value={query} onChange={e => setQuery(e.target.value)}>
-                    <option></option>
-                    {queries.map(query => <option key={query.id} value={query.id}>{query.name}</option>)}
-                </select>}
-                {source === 'query' && queries.find(q => query == q.id) && <Link className="mt-2 px-2 text-xs text-blue-600" to={`/queries/${query}`}>Edit Query</Link> }
-            </div>
-
-            <div className="mt-4">
-                <Button onClick={handleSubmit} text={submitText} />
-            </div>
-        </form>
-    )
-}
-
+import Report from '../components/reports/Report'
+import ReportForm from '../components/reports/ReportForm'
+import ColdStart from '../components/ColdStart'
 
 export default function Dashboard({ match }) {
     const dispatch = useDispatch()
@@ -221,99 +96,15 @@ export default function Dashboard({ match }) {
                         <Report {...report} />
                     </Column>)}
 
-                    {!reports.length && <div className="flex flex-col w-full">
-                        <div className="p-12 bg-white w-auto m-auto">
-                            <h2 className="font-bold text-xl text-center text-blue-600">Let's get exploring!</h2>
-                            <p className="mx-auto my-8 text-center">You can add a report by clicking the <strong>Add Report</strong> button below</p>
-                            <div className="text-center">
-                                <Button size="md" colour="blue" text="Add Report" onClick={handleShowAddReportClick} />
-                            </div>
-                        </div>
-                    </div>}
-
-
-                    {/* <div className="w-1/4 p-2">
-                        <div className="bg-white shadow-sm rounded-md p-4">
-                            1
-                        </div>
-                    </div>
-                    <div className="w-1/4 p-2">
-                        <div className="bg-white shadow-sm rounded-md p-4">
-                            2
-                        </div>
-                    </div>
-                    <div className="w-1/4 p-2">
-                        <div className="bg-white shadow-sm rounded-md p-4">
-                            3
-                        </div>
-                    </div>
-                    <div className="w-1/4 p-2">
-                        <div className="bg-white shadow-sm rounded-md p-4">
-                            4
-                        </div>
-                    </div>
-                    <div className="w-1/4 p-2">
-                        <div className="bg-white shadow-sm rounded-md p-4">
-                            <div className="report-header border-gray-200 pt-2 pb-4 flex flex-row align-baseline">
-                                <h1 className="text-xl text-gray-600 font-bold">Daily Active Users</h1>
-                                <div className="flex-grow"></div>
-
-
-                                <div className="text-gray-400 ml-2">
-
-                                    <svg width="24px" height="24px" viewBox="0 0 20 24" version="1.1">
-
-                                        <g id="Page-1" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
-                                            <g id="navigation-menu-horizontal" stroke="#4a5568">
-                                                <circle id="Oval" cx="3" cy="12" r="2"></circle>
-                                                <circle id="Oval" cx="10" cy="12" r="2"></circle>
-                                                <circle id="Oval" cx="17" cy="12" r="2"></circle>
-                                            </g>
-                                        </g>
-                                    </svg>
-                                </div>
-                            </div>
-
-                            <div className="report-metric">
-                                <div className="text-blue-600 leading-none mt-12" style={{ fontSize: '4rem' }}>
-                                    400
-                                </div>
-                                <div className="text-blue-400 font-bold mt-2 mb-4">Users</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="w-3/4 p-2">
-                        <div className="bg-white shadow-sm rounded-md p-4">
-                            <div className="report-header border-gray-200 pt-2 pb-4 flex flex-row align-baseline">
-                                <h1 className="text-xl text-gray-600 font-bold">Foo</h1>
-                                <div className="flex-grow"></div>
-
-                                <div className="text-gray-400 ml-2">Last updated</div>
-                                <div className="text-gray-400 ml-2">[Edit]</div>
-                            </div>
-
-                            <div className="report-metric">
-                                <div className="text-blue-600 leading-none mt-12" style={{ fontSize: '4rem' }}>
-                                    400
-                                </div>
-                                <div className="text-blue-400 font-bold mt-2 mb-4">Users</div>
-                            </div>
-                        </div>
-                    </div> */}
+                    {!reports.length && <ColdStart
+                        title="Let's get exploring!"
+                        buttonText="Add Report"
+                        onButtonClick={handleShowAddReportClick}
+                    >
+                        <p className="mx-auto my-8 text-center">You can add a report by clicking the <strong>Add Report</strong> button below</p>
+                    </ColdStart>}
                 </div>
             </div>
-
-            {/* <button onClick={() => addReport('new')}>Add Report</button>
-
-            <pre>{JSON.stringify(dashboard, null, 2)}</pre>
-            <pre>{JSON.stringify(reports, null, 2)}</pre> */}
-            {/* {dashboards.map(dashboard => <div key={dashboard.id}>
-                <Link to={`/dashboards/${dashboard.id}`}>
-                    {dashboard.id}: {dashboard.name}
-                </Link>
-            </div>)} */}
-
-            {/* <pre>{JSON.stringify(reports, null, 2)}</pre> */}
         </div>
     )
 }

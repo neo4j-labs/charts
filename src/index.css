@@ -79,3 +79,8 @@ code {
   text-align: center;
 }
 
+
+
+.z-100 {
+  z-index: 100;
+}

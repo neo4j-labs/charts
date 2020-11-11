@@ -6,3 +6,5 @@ tsconfig.json
 yarn.lock
 node_modules
 *.tgz
+
+*.config.js

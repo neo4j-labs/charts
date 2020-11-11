@@ -2,10 +2,11 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import Tab from './tab'
 
-interface CardTab {
+export interface CardTab {
+    children?: any;
     active?: boolean;
-    text: string;
-    onClick: () => void;
+    text?: string;
+    onClick?: () => void;
 }
 
 interface Action {
@@ -20,6 +21,7 @@ interface CardProps {
     tabs?: CardTab[];
     children?: any;
     actions?: Action[]
+    expanded?: boolean;
 }
 
 export default function Card(props: CardProps) {
@@ -29,16 +31,27 @@ export default function Card(props: CardProps) {
 
     let titleClasses = `card-title text-xl text-gray-700 font-bold pb-4 cursor-pointer border-b-2 ${props.titleActive ? 'border-blue-600' : 'border-transparent'}`
 
+    let cardClasses = `card bg-white  p-4`
+    let containerClasses = `flex flex-col overflow-auto text-gray-600`
+
+    if ( props.expanded ) {
+        cardClasses += ` absolute inset-0 z-20`
+        containerClasses += ` h-full`
+    }
+    else {
+        cardClasses += ` shadow-sm rounded-md`
+        containerClasses += ` h-64`
+    }
+
     return (
-        <div className="card bg-white shadow-sm rounded-md p-4">
+        <div className={cardClasses}>
             <div className="card-header border-b border-gray-200 pt-2 flex flex-row align-baseline mb-2">
                 <h1 className={titleClasses} onClick={handleTitleClick}>{ props.title }</h1>
                 <div className="card-spacer flex-grow"></div>
 
-                {props.tabs?.map((tab, index) => <Tab key={index} text={tab.text} active={tab.active} onClick={tab.onClick} />)}
-
+                {props.tabs?.map((tab, index) => <Tab key={index} {...tab} />)}
             </div>
-            <div className="flex flex-col h-64 overflow-auto text-gray-600">
+            <div className={containerClasses}>
                 {props.children}
             </div>
 

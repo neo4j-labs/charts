@@ -12,7 +12,8 @@ export default function Tab(props) {
 
     return (
         <div className="flex flex-row justify-baseline ml-2">
-            <button className={classes} onClick={props.onClick}>{props.text}</button>
+            {props.text && <button className={classes} onClick={props.onClick}>{props.text}</button>}
+            {props.children}
         </div>
     )
 }

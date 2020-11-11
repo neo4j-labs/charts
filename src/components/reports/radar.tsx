@@ -1,68 +1,62 @@
 import React from 'react'
-import { ResponsiveBar } from '@nivo/bar'
+import { ResponsiveRadar } from '@nivo/radar'
 import { ChartReportProps } from './ReportProps'
 import { recordToNative, useReportResults } from '../../utils'
 import Loading from '../Loading'
 
-const MyResponsiveBar = ({ data, keys, layout, stacked, config }) => (
-    <ResponsiveBar
-        layout={layout}
-        groupMode={stacked ? 'stacked' : 'grouped'}
+const MyResponsiveRadar = ({ data, keys, config }) => (
+    <ResponsiveRadar
         data={data}
         keys={keys}
         indexBy="index"
-        margin={{ top: 24, right: 128, bottom: 38, left: 36 }}
-        padding={0.3}
-        valueScale={{ type: 'linear' }}
+        maxValue="auto"
+        margin={{ top: 24, right: 12, bottom: 24, left: 48 }}
+        curve="linearClosed"
+        borderWidth={2}
+        borderColor={{ from: 'color' }}
+        gridLevels={5}
+        gridShape="circular"
+        gridLabelOffset={36}
+        enableDots={true}
+        dotSize={10}
+        dotColor={{ theme: 'background' }}
+        dotBorderWidth={2}
+        dotBorderColor={{ from: 'color' }}
+        enableDotLabel={true}
+        dotLabel="value"
+        dotLabelYOffset={-12}
         colors={{ scheme: 'nivo' }}
-        axisTop={null}
-        axisRight={null}
-        axisBottom={{
-            tickSize: 5,
-            tickPadding: 5,
-            tickRotation: 0,
-        }}
-        axisLeft={{
-            tickSize: 5,
-            tickPadding: 5,
-            tickRotation: 0,
-        }}
-        labelSkipWidth={12}
-        labelSkipHeight={12}
-        labelTextColor={{ from: 'color', modifiers: [ [ 'darker', 1.6 ] ] }}
+        fillOpacity={0.25}
+        blendMode="multiply"
+        animate={true}
+
+        isInteractive={true}
         legends={[
             {
-                dataFrom: 'keys',
-                anchor: 'bottom-right',
+                anchor: 'top-left',
                 direction: 'column',
-                justify: true,
-                translateX: 120,
-                translateY: 0,
-                itemsSpacing: 2,
-                itemWidth: 100,
+                translateX: -48,
+                translateY: -12,
+                itemWidth: 80,
                 itemHeight: 20,
-                itemDirection: 'right-to-left',
-                itemOpacity: 0.85,
-                symbolSize: 20,
+                itemTextColor: '#999',
+                symbolSize: 12,
+                symbolShape: 'circle',
                 effects: [
                     {
                         on: 'hover',
                         style: {
-                            itemOpacity: 1
+                            itemTextColor: '#000'
                         }
                     }
                 ]
             }
         ]}
-        animate={true}
-        motionStiffness={90}
-        motionDamping={15}
-
         {...config}
     />
 )
 
-export default function BarReport(props: ChartReportProps) {
+export default function RadarReport(props: ChartReportProps) {
     const { loading, error, records, first } = useReportResults(props)
 
     if ( loading ) {
@@ -78,6 +72,7 @@ export default function BarReport(props: ChartReportProps) {
     const keys: string[] = []
 
     const data: Record<string, any>[] = records!.reduce((data: Record<string, any>[], row: Record<string, any>) => {
+        if ( !row.has('index') ) return data;
         const index = recordToNative(row.get('index'))
         const idx = data.findIndex(item => item.index === index)
 
@@ -108,6 +103,6 @@ export default function BarReport(props: ChartReportProps) {
         })
 
     return (
-        <MyResponsiveBar data={data} keys={keys} layout={props.layout} stacked={props.stacked} config={props.config} />
+        <MyResponsiveRadar data={data} keys={keys} config={props.config} />
     )
 }
