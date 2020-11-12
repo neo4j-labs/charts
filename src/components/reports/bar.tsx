@@ -77,37 +77,40 @@ export default function BarReport(props: ChartReportProps) {
 
     const keys: string[] = []
 
-    const data: Record<string, any>[] = records!.reduce((data: Record<string, any>[], row: Record<string, any>) => {
-        const index = recordToNative(row.get('index'))
-        const idx = data.findIndex(item => item.index === index)
+    try {
+        const data: Record<string, any>[] = records!.reduce((data: Record<string, any>[], row: Record<string, any>) => {
+            const index = recordToNative(row.get('index'))
+            const idx = data.findIndex(item => item.index === index)
 
-        const key = recordToNative(row.get('key'))
-        const value = recordToNative(row.get('value'))
+            const key = recordToNative(row.get('key'))
+            const value = recordToNative(row.get('value'))
 
-        if ( !keys.includes(key) ) {
-            keys.push(key)
-        }
+            if ( !keys.includes(key) ) {
+                keys.push(key)
+            }
 
-        if ( idx > -1 ) {
-            data[ idx ][ key ] = value
-        }
-        else {
-            data.push({ index, [key]: value  })
-        }
+            if ( idx > -1 ) {
+                data[ idx ][ key ] = value
+            }
+            else {
+                data.push({ index, [key]: value  })
+            }
 
-        return data
-    }, [])
-        .map(row => {
-            keys.forEach(key => {
-                if ( !row.hasOwnProperty(key) ) {
-                    row[ key ] = 0
-                }
+            return data
+        }, [])
+            .map(row => {
+                keys.forEach(key => {
+                    if ( !row.hasOwnProperty(key) ) {
+                        row[ key ] = 0
+                    }
+                })
+
+                return row
             })
 
-            return row
-        })
-
-    return (
-        <MyResponsiveBar data={data} keys={keys} layout={props.layout} stacked={props.stacked} config={props.config} />
-    )
+        return <MyResponsiveBar data={data} keys={keys} layout={props.layout} stacked={props.stacked} config={props.config} />
+    }
+    catch (error) {
+        return <div className="font-bold text-red-600">{error.message}</div>
+    }
 }
