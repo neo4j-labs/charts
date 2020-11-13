@@ -1,6 +1,6 @@
 {
   "name": "@graphapps/charts",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "homepage": "./",
   "dependencies": {
     "@neode/querybuilder": "^0.1.8",
