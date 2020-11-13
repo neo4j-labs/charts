@@ -6,8 +6,8 @@ import { Dashboard, Report, DashboardsState } from "./store/reducers/dashboards"
 export const DASHBOARD_LOCAL_STORAGE_KEY = 'dashboards'
 export const QUERIES_LOCAL_STORAGE_KEY = 'queries'
 
-const DASHBOARD_FILE = 'graphpanel-dashboards.json'
-const QUERIES_FILE = 'graphpanel-queries.json'
+const DASHBOARD_FILE = 'charts-dashboards.json'
+const QUERIES_FILE = 'charts-queries.json'
 
 interface DashboardState {
     dashboards: Dashboard[];

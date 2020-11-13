@@ -1,5 +1,5 @@
 {
-  "name": "@graphapps/graphpanel",
+  "name": "@graphapps/charts",
   "version": "0.1.7",
   "homepage": "./",
   "dependencies": {
@@ -43,6 +43,7 @@
     "uuid": "^8.3.1"
   },
   "scripts": {
+    "prepare": "npm run build",
     "start": "react-scripts start",
     "build": "rimraf *.tgz && rimraf dist && react-scripts build && mv build dist",
     "test": "react-scripts test",

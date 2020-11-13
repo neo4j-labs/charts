@@ -1,6 +1,5 @@
 import { Direction, Operator, AggregationFunction } from "@neode/querybuilder"
 
-
 export type ApocDirection = 'in' | 'out' | 'both'
 export type Condition = 'equals' | 'contains' | 'starts with' | 'ends with' | 'greater than' | 'less than' | 'greater than or equal' | 'less than or equal'
 
@@ -48,8 +47,21 @@ export const TYPE_HEAT_MAP = 'heatmap'
 export const TYPE_NETWORK = 'network'
 
 export const reportTypes = [
-    { key: TYPE_METRIC, value: TYPE_METRIC, text: 'Metric', hint: 'A Metric Report looks for a `count` key on the first row', },
-    { key: TYPE_TABLE, value: TYPE_TABLE, text: 'Table', hint: 'You can return any type of data in a Table report', },
+    {
+        key: TYPE_METRIC,
+        value: TYPE_METRIC, text: 'Metric',
+        hint: 'A Metric Report looks for a `count` key on the first row',
+        exampleQuery: 'MATCH (n) RETURN count(n) AS count',
+        previewQuery: 'RETURN 1234',
+    },
+    {
+        key: TYPE_TABLE,
+        value: TYPE_TABLE,
+        text: 'Table',
+        hint: 'You can return any type of data in a Table report',
+        exampleQuery: `MATCH (m:Movie)\nRETURN\n  m.title AS title,\n  m.budget AS budget`,
+        previewQuery: 'UNWIND [["Toy Story", 30000000],["Jumanji", 65000000],["Waiting to Exhale", 16000000],["Heat", 60000000]] AS row RETURN row[0] AS title, row[1] AS budget',
+    },
     { key: TYPE_BAR, value: TYPE_BAR, text: 'Bar Chart', hint: 'A Bar chart expects three keys: the `index` which represents the data series, the `key` which represents the X axis and a numerical `value` which is plotted on the Y axis.', },
     { key: TYPE_STACKED_BAR, value: TYPE_STACKED_BAR, text: 'Stacked Bar Chart', hint: 'A Stacked Bar chart expects three keys: the `index` which represents the data series, the `key` which represents the X axis and a numerical `value` which is plotted on the Y axis.  These items are stacked on top of each other.', },
     { key: TYPE_HORIZONTAL_BAR, value: TYPE_HORIZONTAL_BAR, text: 'Horizontal Bar Chart', hint: 'A Horizontal Bar chart expects three keys: the `index` which represents the data series, the `key` which represents the X axis and a numerical `value` which is plotted on the Y axis.',  },
@@ -66,6 +78,7 @@ export const reportTypes = [
     { key: TYPE_HEAT_MAP, value: TYPE_HEAT_MAP, text: 'Heat Map', hint: 'A Heat Map expects three keys: the `index` which represents the data series, the `key` which represents the X axis and a numerical `value` which is plotted on the Y axis.', },
     { key: TYPE_NETWORK, value: TYPE_NETWORK, text: 'Network', hint: 'A Network expects rows with two keys: `from` and `to`.  Optionally you can supply a `color` and `radius`', },
 ]
+
 
 export function getHint(type: string) {
     return reportTypes.find(row => row.value === type)!.hint

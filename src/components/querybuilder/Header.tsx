@@ -17,7 +17,12 @@ export default function QueryHeader() {
     const handleUpdateQueryClick = () => {
         dispatch(updateQuery(currentQuery));
     };
-    const handleDeleteClick = () => dispatch(deleteQuery(currentQuery.id as string));
+    const handleDeleteClick = () => {
+        // eslint-disable-next-line
+        if ( confirm('Are you sure you want to delete this query?') ) {
+            dispatch(deleteQuery(currentQuery.id as string));
+        }
+    }
 
     return (
         <div className="query-header flex flex-row flex-grow-0 bg-white border-b border-gray-300 p-4">

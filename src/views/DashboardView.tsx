@@ -10,6 +10,7 @@ import Column from '../components/grid/Column'
 import Report from '../components/reports/Report'
 import ReportForm from '../components/reports/ReportForm'
 import ColdStart from '../components/ColdStart'
+import Header from '../components/header'
 
 export default function Dashboard({ match }) {
     const dispatch = useDispatch()
@@ -49,39 +50,21 @@ export default function Dashboard({ match }) {
 
     return (
         <div className="flex flex-col w-full">
-            <div className="query-header flex flex-row flex-grow-0 bg-white border-b border-gray-300 p-4 mb-4">
-                <div className="flex justify-top flex-grow-0 mr-2 py-2">
-                    <Link className="block bg-transparent text-lg font-bold focus:outline-none" to="/">
-                        <span className="text-blue-600 mr-2">
-                            Dashboards
-                        </span>
-                        <span className="text-gray-400">
-                            /
-                    </span>
-                    </Link>
-                </div>
-                <div className="flex justify-top text-lg font-bold py-2">
-                    {dashboard!.name}
-                </div>
-                <div className="flex flex-grow"></div>
-                <div className="flex flex-row">
-                    {dashboard?.savedAt && <div className="p-2 text-gray-500 text-italic text-sm">Last saved {dashboard.savedAt.toString()}</div>}
-                    <div className="ml-2">
-                        <Button size="sm" colour="blue" text="Add Report" onClick={handleShowAddReportClick} />
-                    </div>
-                    <div className="ml-2">
-                        <Button size="sm" colour="red" text="Delete Dashboard" onClick={handleDeleteClick} />
-                    </div>
-                </div>
-            </div>
+            <Header
+                sectionLink="/dashboards"
+                sectionText="Dashboards"
+                pageTitle={dashboard.name}
+                savedAt={dashboard.savedAt}
+                buttons={[
+                    { colour: 'blue', text: 'Add Report', onClick: handleShowAddReportClick, },
+                    { colour: 'red', text: 'Delete Dashboard', onClick: handleDeleteClick, },
+                ]}
+            />
 
             <div className="container mx-auto pb-16">
                 <div className="px-8 py-8">
                 {showAddReport && <Modal title="Add Report" onClose={() => setShowAddReport(false)}><ReportForm dashboard={dashboard.id} submitText="Add Report" onSubmit={handleAddReport} report={{}} /></Modal>}
-
                     <input type="text" className="font-bold text-gray-800 py-2 mb-2 bg-transparent border-b border-transparent focus:border-blue-400 focus:outline-none w-full" style={{ fontSize: '2rem' }} value={name} onChange={e => setName(e.target.value)} />
-
-                    {/* <h1 className="font-bold text-gray-800" style={{fontSize: '2rem'}}>{dashboard!.name}</h1> */}
 
                     <div className="flex">
 

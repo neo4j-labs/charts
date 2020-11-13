@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="354px" height="290px" viewBox="0 0 354 290" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Group</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <circle id="Oval" stroke-opacity="0.22" stroke="#000000" stroke-width="20" fill="#B794F4" cx="177" cy="145" r="246"></circle>
+        <g id="Group" transform="translate(0.761365, 0.923398)" stroke="#FFFFFF">
+            <g id="Group-2" transform="translate(53.500000, 215.542252) rotate(-94.000000) translate(-53.500000, -215.542252) translate(-16.000000, 167.542252)">
+                <line x1="138.628956" y1="93.3092217" x2="69.6289558" y2="47.3092217" id="Shape" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"></line>
+                <polyline id="Shape" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" points="136.753956 78.3092217 138.628956 93.4203328 123.628956 95.3092217"></polyline>
+                <circle id="node" stroke-width="11" cx="25.5691885" cy="25.5658502" r="19.5"></circle>
+            </g>
+            <g id="Group-2-Copy-2" transform="translate(276.339806, 108.000000) rotate(-94.000000) translate(-276.339806, -108.000000) translate(173.339806, 39.000000)">
+                <line x1="138.628956" y1="93.3092217" x2="69.6289558" y2="47.3092217" id="Shape" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"></line>
+                <polyline id="Shape" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" points="136.753956 78.3092217 138.628956 93.4203328 123.628956 95.3092217"></polyline>
+                <circle id="node" stroke-width="11" cx="25.5691885" cy="25.5658502" r="19.5"></circle>
+                <circle id="node-copy" stroke-width="11" cx="180.725383" cy="112.373426" r="19.5"></circle>
+            </g>
+            <g id="Group-2-Copy" transform="translate(150.098304, 122.158600) rotate(-4.000000) translate(-150.098304, -122.158600) translate(102.598304, 78.658600)">
+                <line x1="94.5342329" y1="84.6794987" x2="63.3397378" y2="55.6638853" id="Shape" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"></line>
+                <polyline id="Shape" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" points="92.6592329 69.6794987 94.5342329 84.7906098 79.5342329 86.6794987"></polyline>
+                <circle id="node" stroke-width="11" cx="25.7074119" cy="25.7086136" r="19.5"></circle>
+            </g>
+        </g>
+    </g>
+</svg>

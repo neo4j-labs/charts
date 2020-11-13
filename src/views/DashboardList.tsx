@@ -9,6 +9,7 @@ import Modal from '../components/modal'
 import Card from '../components/card'
 import Column from '../components/grid/Column'
 import ColdStart from '../components/ColdStart'
+import Header from '../components/header'
 
 
 export default function Dashboards({ history }) {
@@ -42,21 +43,13 @@ export default function Dashboards({ history }) {
 
     return (
         <div className="flex flex-col w-full">
-            <div className="query-header flex flex-row flex-grow-0 bg-white border-b border-gray-300 p-4 mb-4">
-                <div className="flex justify-top flex-grow-0 mr-2 py-2">
-                    <Link className="block bg-transparent text-lg font-bold focus:outline-none" to="/">
-                        <span className="text-blue-600 mr-2">
-                        Dashboards
-                        </span>
-                    </Link>
-                </div>
-
-                <div className="flex flex-grow"></div>
-
-                <div className="ml-2">
-                    <Button size="sm" colour="blue" text="Add Dashboard" onClick={handleShowAddClick} />
-                </div>
-            </div>
+            <Header
+                sectionLink="/dashboards"
+                sectionText="Dashboards"
+                buttons={[
+                    { colour: 'blue', text: 'Add Dashboard', onClick: handleShowAddClick, },
+                ]}
+            />
 
             <div className="w-full">
                 <div className="container m-auto">
