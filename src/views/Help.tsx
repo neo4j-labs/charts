@@ -1,22 +1,47 @@
 import React from 'react'
 import Card from '../components/card'
 import Header from '../components/header'
-import MetricReport from '../components/reports/metric'
-import MetricTable from '../components/reports/table'
-import { reportTypes, TYPE_METRIC, TYPE_TABLE } from '../constants'
 
+import { reportTypes, TYPE_HORIZONTAL_BAR, TYPE_HORIZONTAL_FUNNEL, TYPE_HORIZONTAL_STACKED_BAR, TYPE_STACKED_BAR, } from '../constants'
 
 function ExampleReport(report) {
     let example: any = undefined
 
+    const componentProps = { source: 'cypher', query: report.previewQuery }
+
     switch (report.value) {
-        case TYPE_METRIC:
-            example = <MetricReport source="cypher" query={report.previewQuery} />
+        // case TYPE_METRIC:
+        //     example = <MetricReport source="cypher" query={report.previewQuery} />
+        //     break;
+        // case TYPE_TABLE:
+        //     example = <MetricTable source="cypher" query={report.previewQuery} />
+        //     break;
+
+        case TYPE_STACKED_BAR:
+            example = report.component({ ...componentProps, stacked: true })
             break;
-        case TYPE_TABLE:
-            example = <MetricTable source="cypher" query={report.previewQuery} />
+
+        case TYPE_HORIZONTAL_STACKED_BAR:
+            example = report.component({ ...componentProps, layout: 'horizontal', stacked: true })
+            break;
+
+        case TYPE_HORIZONTAL_BAR:
+            example = report.component({ ...componentProps, layout: 'horizontal' })
+            break;
+
+        case TYPE_HORIZONTAL_FUNNEL:
+            example = report.component({ ...componentProps, layout: 'horizontal' })
+            break;
+
+        default:
+            // @ts-ignore
+            example = report.previewQuery ?  report.component(componentProps)
+                : 'Preview coming soon...'
             break;
     }
+
+
+
     return (
         <div className="flex mb-12">
             <div className="w-full lg:w-1/2 flex flex-col justify-between px-2">

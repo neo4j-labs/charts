@@ -4,7 +4,7 @@ import Loading from '../Loading'
 import { useReportResults, recordToNative } from '../../utils'
 import { ChartReportProps } from './ReportProps'
 
-export default function ChordReport(props: ChartReportProps) {
+export default function BubbleReport(props: ChartReportProps) {
     const { loading, error, records, } = useReportResults(props)
 
     if ( loading ) {
