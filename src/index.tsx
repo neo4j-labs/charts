@@ -42,7 +42,7 @@ if ( process.env.REACT_APP_NEO4J_SCHEME ) {
 ReactDOM.render(
   <React.StrictMode>
     <ReduxProvider store={store}>
-      <Neo4jProvider logo={logo()} footer={footer()}>
+      <Neo4jProvider driver={driver} logo={logo()} footer={footer()}>
         <App />
       </Neo4jProvider>
     </ReduxProvider>

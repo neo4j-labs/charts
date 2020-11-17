@@ -10,9 +10,10 @@ import Card from '../components/card'
 import Column from '../components/grid/Column'
 import ColdStart from '../components/ColdStart'
 import Header from '../components/header'
+import { FeedbackForm } from '../components/feedback/FeedbackForm'
 
 
-export default function Dashboards({ history }) {
+export default function Dashboards({ history, match }) {
     const dispatch = useDispatch()
     // @ts-ignore
     const dashboards = useSelector((n: RootState) => n.dashboards.dashboards)
@@ -93,6 +94,8 @@ export default function Dashboards({ history }) {
                 </form>
             </Modal>
             }
+
+            <FeedbackForm page={match.path} />
         </div>
     )
 }

@@ -11,6 +11,7 @@ import Report from '../components/reports/Report'
 import ReportForm from '../components/reports/ReportForm'
 import ColdStart from '../components/ColdStart'
 import Header from '../components/header'
+import { FeedbackForm } from '../components/feedback/FeedbackForm'
 
 export default function Dashboard({ match }) {
     const dispatch = useDispatch()
@@ -88,6 +89,8 @@ export default function Dashboard({ match }) {
                     </ColdStart>}
                 </div>
             </div>
+
+            <FeedbackForm page={match.path} />
         </div>
     )
 }

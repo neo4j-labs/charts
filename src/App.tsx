@@ -9,7 +9,6 @@ import QueryList from './views/QueryList'
 import { useSelector } from 'react-redux';
 import { getInitialState } from './persistence';
 import { RootState } from './store';
-import { version } from '../package.json'
 import Help from './views/Help';
 
 function App() {
@@ -37,7 +36,7 @@ function App() {
             Help
           </Link>
         </div>
-        <div className="flex flex-col flex-grow w-full bg-gray-100 overflow-auto">
+        <div className="flex flex-col flex-grow w-full bg-gray-100 overflow-auto pb-12">
           <Switch>
             <Route exact={true} path="/dashboards" component={DashboardList} />
             <Route exact={true} path="/queries" component={QueryList} />
