@@ -27,13 +27,13 @@ export default function QueryHeader() {
     return (
         <div className="query-header flex flex-row flex-grow-0 bg-white border-b border-gray-300 p-4">
             <div className="flex justify-top flex-grow-0 mr-2 py-2">
-                <Link className="block bg-transparent text-lg font-bold focus:outline-none" to="/">
+                <Link className="block bg-transparent font-bold focus:outline-none" to="/">
                     <span className="text-blue-600 mr-2">Queries</span>
                     <span className="text-gray-400"> / </span>
                 </Link>
             </div>
             <div className="flex flex-grow justify-top">
-                <input className="bg-transparent text-lg font-bold focus:outline-none border-b border-transparent focus:border-blue-400 w-full" type="text" value={currentQuery.name} onChange={e => setUpdatedName(e.target.value)} />
+                <input className="bg-transparent font-bold focus:outline-none border-b border-transparent focus:border-blue-400 w-full" type="text" value={currentQuery.name} onChange={e => setUpdatedName(e.target.value)} />
             </div>
 
             <div className="flex flex-row">

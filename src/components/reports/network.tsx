@@ -8,18 +8,7 @@ import { ChartReportProps } from './ReportProps'
 //  } from '@nivo/colors'
 
 export default function NetworkReport(props: ChartReportProps) {
-    const { loading, error, records, } = useReportResults(props)
-
-    if ( loading ) {
-        return <Loading />
-    }
-    else if ( error ) {
-        return <div className="font-bold text-red-600">{error.message}</div>
-    }
-    else if ( !records?.length ) {
-        return <div className="font-bold text-green-600">No results</div>
-    }
-
+    const { records, } = props
 
     const nodes = records.reduce((acc: Record<string, any>[], row) => {
         const from = recordToNative(row.get('from'))

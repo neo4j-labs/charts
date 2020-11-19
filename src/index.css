@@ -19,10 +19,65 @@ code {
 
 
 /* Login Form Styling */
+.login {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.login .column {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+
+.login label {
+  display: block;
+  font-weight: bold;
+  padding: .2rem 0.5rem;
+  font-size: .8rem;
+  color: #718096;
+}
+
+.login input, .login select {
+  border: 1px solid #cbd5e0;
+  color: #718096;
+  padding: 0.5rem;
+  width: 100%;
+  border-radius: .5rem;
+  margin-bottom: .5rem;
+}
+.login select {
+  height: 2rem;
+}
+
+.login button {
+  border: 1px solid #3182ce;
+  background: #3182ce;
+  color: #fff;
+  padding: .8rem 0;
+  border-radius: .5rem;
+  font-weight: bold;
+  margin-top: 1rem;
+}
+
+
 .login .logo img {
   display: block;
   width: 120px;
   margin: 0 auto 24px;
+}
+
+.login .fields {
+  display: flex;
+}
+
+.login .fields .field {
+  margin-right: .5rem;
+}
+.login .fields .field:last-child {
+  margin-right: 0;
 }
 
 .login {
@@ -42,10 +97,11 @@ code {
   padding: 24px;
   border-radius: 12px;
   text-align: left;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 
 .login .ui.form select {
-  height: 38px;
+  height: 42px;
 }
 .login .ui.form  .switch {
   display: block;

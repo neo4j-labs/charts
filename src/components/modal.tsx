@@ -14,7 +14,7 @@ export default function Modal(props: ModalProps) {
 
             <div className="flex flex-row justify-center z-20">
                 <div className="bg-white rounded-lg shadow-lg" style={{minWidth: '480px'}}>
-                    <div className="flex flex-row justify-between m-4 pb-4 text-gray-600 font-bold border-b border-gray-400">
+                    <div className="flex flex-row justify-between m-4 mb-0 pb-2 text-gray-600 font-bold border-b border-gray-400">
                         {props.title && <h2>{props.title}</h2>}
 
                         <button className="text-lg text-gray-400 focus:outline-none" onClick={props.onClose}>x</button>

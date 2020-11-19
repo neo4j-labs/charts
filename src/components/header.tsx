@@ -9,14 +9,14 @@ export default function Header(props) {
     return (
         <div className="query-header flex flex-row flex-grow-0 bg-white border-b border-gray-300 p-4 mb-4">
                 <div className="flex justify-top flex-grow-0 mr-2 py-2">
-                    <Link className="block bg-transparent text-lg font-bold focus:outline-none" to={sectionLink}>
+                    <Link className="block bg-transparent font-bold focus:outline-none" to={sectionLink}>
                         <span className="text-blue-600 mr-2">
                         {sectionText}
                         </span>
                         {pageTitle && <span className="text-gray-400"> / </span>}
                     </Link>
                 </div>
-                <div className="flex justify-top text-lg font-bold py-2">
+                <div className="flex justify-top font-bold py-2">
                     {pageTitle}
                 </div>
                 {children}

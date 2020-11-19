@@ -1,23 +1,10 @@
 import React from 'react'
 import { ResponsiveBubble } from '@nivo/circle-packing'
-import Loading from '../Loading'
-import { useReportResults, recordToNative } from '../../utils'
+import { recordToNative } from '../../utils'
 import { ChartReportProps } from './ReportProps'
 
 export default function BubbleReport(props: ChartReportProps) {
-    const { loading, error, records, } = useReportResults(props)
-
-    if ( loading ) {
-        return <Loading />
-    }
-    else if ( error ) {
-        return <div className="font-bold text-red-600">{error.message}</div>
-    }
-    else if ( !records?.length ) {
-        return <div className="font-bold text-green-600">No results</div>
-    }
-
-
+    const { records, } = props
 
 
     const hierarchy = records.reduce((hierarchy: Record<string, any>[], row: Record<string, any>) => {
@@ -81,8 +68,6 @@ export default function BubbleReport(props: ChartReportProps) {
 
     const rootNode = hierarchy.find(node => node.parent === null)
     const root = buildTree(rootNode!.id)
-
-
 
     return (
         <div className="h-full w-full overflow-hidden">

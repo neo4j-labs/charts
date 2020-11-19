@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { updateReport, deleteReport } from '../../store/actions';
-import { TYPE_BAR, TYPE_LINE, TYPE_METRIC, TYPE_TABLE, TYPE_STACKED_BAR, TYPE_HORIZONTAL_BAR, TYPE_HORIZONTAL_STACKED_BAR, TYPE_RADAR, TYPE_FUNNEL, TYPE_HORIZONTAL_FUNNEL, TYPE_BUMP, TYPE_AREA_BUMP, TYPE_CHORD, TYPE_BUBBLE, TYPE_CALENDAR, TYPE_HEAT_MAP, TYPE_NETWORK } from '../../constants';
+import { TYPE_BAR, TYPE_LINE, TYPE_METRIC, TYPE_TABLE, TYPE_STACKED_BAR, TYPE_HORIZONTAL_BAR, TYPE_HORIZONTAL_STACKED_BAR, TYPE_RADAR, TYPE_FUNNEL, TYPE_HORIZONTAL_FUNNEL, TYPE_BUMP, TYPE_AREA_BUMP, TYPE_CHORD, TYPE_BUBBLE, TYPE_CALENDAR, TYPE_HEAT_MAP, TYPE_NETWORK, TYPE_SANKEY, reportTypes, TYPE_VERTICAL_SANKEY } from '../../constants';
 import Card, { CardTab } from '../card';
 import MetricReport from './metric';
 import TableReport from './table';
@@ -17,6 +17,9 @@ import BubbleReport from './bubble';
 import CalendarReport from './calendar';
 import HeatMap from './heatMap';
 import NetworkReport from './network';
+import SankeyReport from './sankey';
+import { ReportProps, useReportResults } from '../../utils';
+import Loading from '../Loading';
 
 
 function ExpandIcon({ onClick }) {
@@ -49,10 +52,12 @@ function ContractIcon({ onClick }) {
     )
 }
 
-export default function Report(props) {
+export default function Report(props: ReportProps) {
+    const dispatch = useDispatch();
+
+    // Tab State
     const [ expanded, setExpanded ] = useState<boolean>(false)
     const [ tab, setTab ] = useState<string>('report');
-    const dispatch = useDispatch();
 
     const handleDelete = () => {
         // eslint-disable-next-line
@@ -77,64 +82,99 @@ export default function Report(props) {
         expandContract
     ];
 
+    // Data
+    const { loading, error, first, records, run, params } = useReportResults(props)
+
+    // Re-run query if it changes
+    useEffect(() => {
+        run(params, props.database)
+        // eslint-disable-next-line
+    }, [  props.query, props.database ])
+
     let content = <pre>{JSON.stringify(props, null, 2)}</pre>;
 
     if (tab === 'edit') {
         content = <ReportForm dashboard={props.dashboard} report={props} submitText="Update Report" onSubmit={handleUpdateReport} />;
     }
+    else if ( loading ) {
+        content = <Loading />
+    }
+    else if ( error ) {
+        content = <div className="font-bold rounded-md border border-red-600 p-2 text-red-600">{error.message}</div>
+    }
+    else if ( !records?.length ) {
+        content = <div className="font-bold rounded-md text-green-600">
+            There were no results returned for this query
+            </div>
+    }
     else if (props.type === TYPE_METRIC) {
-        content = <MetricReport {...props} />;
+        content = <MetricReport records={records} first={first} />;
     }
     else if (props.type === TYPE_TABLE) {
-        content = <TableReport source={props.source} query={props.query} database={props.database} />;
+        content = <TableReport records={records} first={first} />;
     }
     else if (props.type === TYPE_LINE) {
-        content = <LineReport source={props.source} query={props.query} database={props.database} />;
+        content = <LineReport records={records} first={first} />;
     }
     else if (props.type === TYPE_BAR) {
-        content = <BarReport source={props.source} query={props.query} database={props.database} />;
+        content = <BarReport records={records} first={first} />;
     }
     else if (props.type === TYPE_STACKED_BAR) {
-        content = <BarReport source={props.source} query={props.query} database={props.database} stacked={true} />;
+        content = <BarReport records={records} first={first} stacked={true} />;
     }
     else if (props.type === TYPE_HORIZONTAL_BAR) {
-        content = <BarReport source={props.source} query={props.query} database={props.database} layout="horizontal" />;
+        content = <BarReport records={records} first={first} layout="horizontal" />;
     }
     else if (props.type === TYPE_HORIZONTAL_STACKED_BAR) {
-        content = <BarReport source={props.source} query={props.query} database={props.database} stacked={true} layout="horizontal" />;
+        content = <BarReport records={records} first={first} stacked={true} layout="horizontal" />;
     }
     else if (props.type === TYPE_HORIZONTAL_STACKED_BAR) {
-        content = <BarReport source={props.source} query={props.query} database={props.database} stacked={true} layout="horizontal" />;
+        content = <BarReport records={records} first={first} stacked={true} layout="horizontal" />;
     }
     else if (props.type === TYPE_RADAR) {
-        content = <RadarReport source={props.source} query={props.query} database={props.database} stacked={true} />;
+        content = <RadarReport records={records} first={first} />;
     }
     else if (props.type === TYPE_FUNNEL) {
-        content = <FunnelReport source={props.source} query={props.query} database={props.database} />;
+        content = <FunnelReport records={records} first={first} />;
     }
     else if (props.type === TYPE_HORIZONTAL_FUNNEL) {
-        content = <FunnelReport source={props.source} query={props.query} database={props.database} layout="horizontal" />;
+        content = <FunnelReport records={records} first={first} layout="horizontal" />;
     }
     else if (props.type === TYPE_BUMP) {
-        content = <BumpReport source={props.source} query={props.query} database={props.database} />;
+        content = <BumpReport records={records} first={first} />;
     }
     else if (props.type === TYPE_AREA_BUMP) {
-        content = <AreaBumpReport source={props.source} query={props.query} database={props.database} />;
+        content = <AreaBumpReport records={records} first={first} />;
     }
     else if (props.type === TYPE_CHORD) {
-        content = <ChordReport source={props.source} query={props.query} database={props.database} />;
+        content = <ChordReport records={records} first={first} />;
     }
     else if (props.type === TYPE_BUBBLE) {
-        content = <BubbleReport source={props.source} query={props.query} database={props.database} />;
+        content = <BubbleReport records={records} first={first} />;
     }
     else if (props.type === TYPE_CALENDAR) {
-        content = <CalendarReport source={props.source} query={props.query} database={props.database} />;
+        content = <CalendarReport records={records} first={first} />;
     }
     else if (props.type === TYPE_HEAT_MAP) {
-        content = <HeatMap source={props.source} query={props.query} database={props.database} />;
+        content = <HeatMap records={records} first={first} />;
     }
     else if (props.type === TYPE_NETWORK) {
-        content = <NetworkReport source={props.source} query={props.query} database={props.database} />;
+        content = <NetworkReport records={records} first={first} />;
+    }
+    else if (props.type === TYPE_SANKEY) {
+        content = <SankeyReport records={records} first={first} />;
+    }
+    else if (props.type === TYPE_VERTICAL_SANKEY) {
+        content = <SankeyReport records={records} first={first} layout="vertical" />;
+    }
+    else {
+        const report = reportTypes.find(report => report.value === props.type)
+
+
+        if ( report ) {
+            const componentProps = report?.props || {}
+            content = report.component({ records, first, ...componentProps,  })
+        }
     }
 
     return (

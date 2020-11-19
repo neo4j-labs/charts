@@ -23,16 +23,16 @@ function App() {
   }
 
   return (
-    <div className="App flex flex-col">
+    <div className="App flex flex-col text-gray-600">
       <Router>
         <div className="flex flex-row w-full bg-gray-800 flex-grow-0 flex-shrink-0">
-          <Link to="/" className="px-4 py-6 bg-gray-700 text-white hover:text-gray-200 font-bold">
+          <Link to="/" className="px-4 py-6 bg-gray-700 text-white text-sm hover:text-gray-200 font-bold">
             <span>Charts</span>
           </Link>
           <div className="flex flex-grow"></div>
-          <Link className="text-white px-4 py-6 hover:text-gray-200 hover:bg-gray-700" to="/dashboards">Dashboards</Link>
-          <Link className="text-white px-4 py-6 hover:text-gray-200 hover:bg-gray-700" to="/queries">Queries</Link>
-          <Link className="text-white px-4 py-6 hover:text-gray-200 hover:bg-gray-700" to="/help">
+          <Link className="text-sm text-white px-4 py-6 hover:text-gray-200 hover:bg-gray-700" to="/dashboards">Dashboards</Link>
+          <Link className="text-sm text-white px-4 py-6 hover:text-gray-200 hover:bg-gray-700" to="/queries">Queries</Link>
+          <Link className="text-sm text-white px-4 py-6 hover:text-gray-200 hover:bg-gray-700" to="/help">
             Help
           </Link>
         </div>

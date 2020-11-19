@@ -1,13 +1,46 @@
 import React from 'react'
 import { ResponsiveBar } from '@nivo/bar'
 import { ChartReportProps } from './ReportProps'
-import { recordToNative, useReportResults } from '../../utils'
-import Loading from '../Loading'
+import { recordToNative } from '../../utils'
 
-const MyResponsiveBar = ({ data, keys, layout, stacked, config }) => (
-    <ResponsiveBar
-        layout={layout}
-        groupMode={stacked ? 'stacked' : 'grouped'}
+export default function BarReport(props: ChartReportProps) {
+    const { records, } = props
+
+    const keys: string[] = []
+
+        const data: Record<string, any>[] = records.reduce((data: Record<string, any>[], row: Record<string, any>) => {
+            const index = recordToNative(row.get('index'))
+            const idx = data.findIndex(item => item.index === index)
+
+            const key = recordToNative(row.get('key'))
+            const value = recordToNative(row.get('value'))
+
+            if ( !keys.includes(key) ) {
+                keys.push(key)
+            }
+
+            if ( idx > -1 ) {
+                data[ idx ][ key ] = value
+            }
+            else {
+                data.push({ index, [key]: value  })
+            }
+
+            return data
+        }, [])
+            .map(row => {
+                keys.forEach(key => {
+                    if ( !row.hasOwnProperty(key) ) {
+                        row[ key ] = 0
+                    }
+                })
+
+                return row
+            })
+
+        return <ResponsiveBar
+        layout={props.layout}
+        groupMode={props.stacked ? 'stacked' : 'grouped'}
         data={data}
         keys={keys}
         indexBy="index"
@@ -58,59 +91,7 @@ const MyResponsiveBar = ({ data, keys, layout, stacked, config }) => (
         motionStiffness={90}
         motionDamping={15}
 
-        {...config}
+        {...props.config}
     />
-)
 
-export default function BarReport(props: ChartReportProps) {
-    const { loading, error, records, first } = useReportResults(props)
-
-    if ( loading ) {
-        return <Loading />
-    }
-    else if ( error ) {
-        return <div className="font-bold text-red-600">{error.message}</div>
-    }
-    else if ( !first ) {
-        return <div className="font-bold text-green-600">No results</div>
-    }
-
-    const keys: string[] = []
-
-    try {
-        const data: Record<string, any>[] = records!.reduce((data: Record<string, any>[], row: Record<string, any>) => {
-            const index = recordToNative(row.get('index'))
-            const idx = data.findIndex(item => item.index === index)
-
-            const key = recordToNative(row.get('key'))
-            const value = recordToNative(row.get('value'))
-
-            if ( !keys.includes(key) ) {
-                keys.push(key)
-            }
-
-            if ( idx > -1 ) {
-                data[ idx ][ key ] = value
-            }
-            else {
-                data.push({ index, [key]: value  })
-            }
-
-            return data
-        }, [])
-            .map(row => {
-                keys.forEach(key => {
-                    if ( !row.hasOwnProperty(key) ) {
-                        row[ key ] = 0
-                    }
-                })
-
-                return row
-            })
-
-        return <MyResponsiveBar data={data} keys={keys} layout={props.layout} stacked={props.stacked} config={props.config} />
-    }
-    catch (error) {
-        return <div className="font-bold text-red-600">{error.message}</div>
-    }
 }

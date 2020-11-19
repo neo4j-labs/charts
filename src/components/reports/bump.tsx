@@ -6,17 +6,8 @@ import Loading from '../Loading'
 
 
 export default function BumpReport(props: ChartReportProps) {
-    const { loading, error, records, } = useReportResults(props)
+    const { records, } = props
 
-    if ( loading ) {
-        return <Loading />
-    }
-    else if ( error ) {
-        return <div className="font-bold text-red-600">{error.message}</div>
-    }
-    else if ( !records?.length ) {
-        return <div className="font-bold text-green-600">No results</div>
-    }
 
     const data: BumpInputSerie[] = records.map(row => ({
         id: recordToNative(row.get('id')),

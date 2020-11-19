@@ -1,28 +1,8 @@
 import React from "react"
-import { Source } from "../../../store/reducers/dashboards";
-import { useReportResults } from "../../../utils";
-import Loading from "../../Loading"
+import ReportProps from "../ReportProps";
 
-
-interface MetricTableProps {
-    database?: string;
-    source: Source;
-    query: string;
-    params?: Record<string, any>;
-}
-export default function MetricTable(props: MetricTableProps) {
-    const { error, loading, records, first } = useReportResults(props)
-
-    if (error) {
-        return <div className="font-bold text-red-600">{error.message}</div>
-    }
-    else if ( loading || !first) {
-        return  <Loading />
-    }
-
-    else if (records && !records.length) {
-        return <div>No results found.</div>
-    }
+export default function TableReport(props: ReportProps) {
+    const { records, first } = props
 
     return (
         <table>

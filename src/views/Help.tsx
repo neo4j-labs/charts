@@ -1,46 +1,18 @@
 import React from 'react'
 import Card from '../components/card'
 import Header from '../components/header'
-
-import { reportTypes, TYPE_HORIZONTAL_BAR, TYPE_HORIZONTAL_FUNNEL, TYPE_HORIZONTAL_STACKED_BAR, TYPE_STACKED_BAR, } from '../constants'
+import Report from '../components/reports/Report'
+import { reportTypes, } from '../constants'
 
 function ExampleReport(report) {
     let example: any = undefined
 
-    const componentProps = { source: 'cypher', query: report.previewQuery }
-
-    switch (report.value) {
-        // case TYPE_METRIC:
-        //     example = <MetricReport source="cypher" query={report.previewQuery} />
-        //     break;
-        // case TYPE_TABLE:
-        //     example = <MetricTable source="cypher" query={report.previewQuery} />
-        //     break;
-
-        case TYPE_STACKED_BAR:
-            example = report.component({ ...componentProps, stacked: true })
-            break;
-
-        case TYPE_HORIZONTAL_STACKED_BAR:
-            example = report.component({ ...componentProps, layout: 'horizontal', stacked: true })
-            break;
-
-        case TYPE_HORIZONTAL_BAR:
-            example = report.component({ ...componentProps, layout: 'horizontal' })
-            break;
-
-        case TYPE_HORIZONTAL_FUNNEL:
-            example = report.component({ ...componentProps, layout: 'horizontal' })
-            break;
-
-        default:
-            // @ts-ignore
-            example = report.previewQuery ?  report.component(componentProps)
-                : 'Preview coming soon...'
-            break;
+    if ( ! report.previewQuery ) {
+        example = <Card title={report.text}>Preview coming soon...</Card>
     }
-
-
+    else {
+        example = <Report type={report.value} source='cypher' query={report.previewQuery} />
+    }
 
     return (
         <div className="flex mb-12">
@@ -58,13 +30,8 @@ function ExampleReport(report) {
             </div>
 
             <div className="w-full lg:w-1/2 p-2 pb-0">
-                <Card
-                    title={report.text}
-                >
-                    {example}
-                </Card>
+                {example}
             </div>
-
         </div>
     )
 }

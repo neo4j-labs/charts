@@ -5,20 +5,10 @@ import Loading from '../Loading';
 import { ChartReportProps } from './ReportProps';
 
 export default function HeatMap(props: ChartReportProps) {
-    const { loading, error, records, first } = useReportResults(props)
-
-    if ( loading ) {
-        return <Loading />
-    }
-    else if ( error ) {
-        return <div className="font-bold text-red-600">{error.message}</div>
-    }
-    else if ( !first ) {
-        return <div className="font-bold text-green-600">No results</div>
-    }
+    const { records, } = props
 
     const keys: string[] = []
-    const data: Record<string, any>[] = records!.reduce((data: Record<string, any>[], row: Record<string, any>) => {
+    const data: Record<string, any>[] = records.reduce((data: Record<string, any>[], row: Record<string, any>) => {
         const index = recordToNative(row.get('index'))
         const idx = data.findIndex(item => item.index === index)
 

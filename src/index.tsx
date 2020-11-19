@@ -6,7 +6,7 @@ import { createDriver, Neo4jProvider } from 'use-neo4j';
 import { Driver } from 'neo4j-driver'
 import { version } from 'use-neo4j/package.json'
 import appLogo from './logo.svg'
-import 'semantic-ui-css/semantic.min.css'
+// import 'semantic-ui-css/semantic.min.css'
 import 'tailwindcss/dist/tailwind.css'
 import './index.css';
 import store from './store';
@@ -42,7 +42,7 @@ if ( process.env.REACT_APP_NEO4J_SCHEME ) {
 ReactDOM.render(
   <React.StrictMode>
     <ReduxProvider store={store}>
-      <Neo4jProvider driver={driver} logo={logo()} footer={footer()}>
+      <Neo4jProvider logo={logo()} footer={footer()}>
         <App />
       </Neo4jProvider>
     </ReduxProvider>

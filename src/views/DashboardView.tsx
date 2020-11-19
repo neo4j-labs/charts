@@ -65,7 +65,7 @@ export default function Dashboard({ match }) {
             <div className="container mx-auto pb-16">
                 <div className="px-8 py-8">
                 {showAddReport && <Modal title="Add Report" onClose={() => setShowAddReport(false)}><ReportForm dashboard={dashboard.id} submitText="Add Report" onSubmit={handleAddReport} report={{}} /></Modal>}
-                    <input type="text" className="font-bold text-gray-800 py-2 mb-2 bg-transparent border-b border-transparent focus:border-blue-400 focus:outline-none w-full" style={{ fontSize: '2rem' }} value={name} onChange={e => setName(e.target.value)} />
+                    <input type="text" className="font-bold text-gray-800 py-2 mb-2 bg-transparent border-b border-transparent focus:border-blue-400 focus:outline-none w-full text-xl" value={name} onChange={e => setName(e.target.value)} />
 
                     <div className="flex">
 

@@ -61,7 +61,7 @@ export const FeedbackForm = (props) => {
     if ( helpful === undefined ) {
         view = (
             <div className="flex p-2 font-bold">
-                <h1 className="flex-grow font-bold mb-2 pt-1">Is this Graph App Useful?</h1>
+                <h1 className="flex-grow font-bold mb-2">Is this Graph App Useful?</h1>
 
                 <svg width="22px" height="22px" viewBox="0 0 22 22" role="button" className="no stroke-current ml-2" aria-label="No, this page isn't helpful" onClick={() => setHelpful(false)}>
                     <g fill="transparent">
@@ -92,7 +92,7 @@ export const FeedbackForm = (props) => {
         view = (
             <div className="p-2">
                 <div className="flex">
-                    <h1 className="flex-grow font-bold mb-2 pt-1">We're sorry to hear that...</h1>
+                    <h1 className="flex-grow font-bold mb-2">We're sorry to hear that...</h1>
 
                     <svg width="14px" height="22px" viewBox="0 0 22 22" role="button" className="cancel stroke-current" aria-label="Cancel Feedback" onClick={() => setHelpful(undefined)}><line x1="19.5833333" y1="0.416666667" x2="0.416666667" y2="19.5833333"></line><line x1="19.5833333" y1="19.5833333" x2="0.416666667" y2="0.416666667"></line></svg>
                 </div>
@@ -132,7 +132,7 @@ export const FeedbackForm = (props) => {
 
 
     return (
-        <div className={`fixed bottom-0 right-0 mx-4 -mb-2 p-2 rounded-md shadow-md bg-${colour}-200 text-${colour}-800`} style={{width: '280px'}}>
+        <div className={`fixed bottom-0 right-0 mx-4 -mb-2 p-2 rounded-md shadow-md bg-${colour}-200 text-${colour}-800`} style={{width: '320px'}}>
             {view}
         </div>
     )

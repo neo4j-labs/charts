@@ -1,41 +1,42 @@
 import React from 'react'
-import { AreaBumpInputSerie, ResponsiveAreaBump } from '@nivo/bump'
+import { ResponsiveScatterPlot, Serie } from '@nivo/scatterplot'
 import { ChartReportProps } from './ReportProps'
 import { recordToNative } from '../../utils'
-import Loading from '../Loading'
 
-
-export default function AreaBumpReport(props: ChartReportProps) {
+export default function ScatterPlotReport(props: ChartReportProps) {
     const { records } = props
 
-    const data: AreaBumpInputSerie[] = records.map(row => ({
+    const data: Serie[] = records.map(row => ({
         id: recordToNative(row.get('id')),
         x:  recordToNative(row.get('x')),
         y: recordToNative(row.get('y')),
     }))
-        .reduce((acc: Record<string, any>[], row: Record<string, any>) => {
+        .reduce((acc: Serie[], row: Record<string, any>) => {
             const index = acc.findIndex(item => item.id === row.id)
 
             if ( index === -1 ) {
                 return acc.concat({
                     id: row.id,
                     data: [ { x: row.x, y: row.y } ]
-                }) as AreaBumpInputSerie[]
+                }) as Serie[]
             }
 
             acc[ index ].data.push({ x: row.x, y: row.y })
 
             acc[ index ].data.sort((a, b) => a.x > b.x ? -1 : 1)
 
-            return acc as AreaBumpInputSerie[]
-        }, [] as AreaBumpInputSerie[])
+            return acc as Serie[]
+        }, [] as Serie[])
+
+    console.log(data);
+
 
     return (
-        <div className="h-full w-full overflow-hidden">
-            <ResponsiveAreaBump
-                data={data}
-                margin={{ top: 32, right: 100, bottom: 32, left: 24 }}
-            />
-        </div>
+        <ResponsiveScatterPlot
+            data={data}
+            margin={{ top: 24, right: 24, bottom: 38, left: 32 }}
+
+            {...props.config}
+        />
     )
 }

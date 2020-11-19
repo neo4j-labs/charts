@@ -3,7 +3,7 @@ import Builder, { Operator } from "@neode/querybuilder";
 import { QueryResult, Record as Neo4jRecord } from 'neo4j-driver'
 import { useSelector } from "react-redux";
 import { useReadCypher } from "use-neo4j";
-import ReportProps from "./components/reports/ReportProps";
+
 import { directions, operators } from "./constants";
 import { RootState } from "./store";
 import { Query } from "./store/actions";
@@ -139,6 +139,14 @@ export function queryToCypher(query: string | Query): CypherOutput {
 }
 
 
+export interface ReportProps {
+    query: string;
+    source: 'cypher' | 'query'
+    database?: string;
+    type: string;
+    [key: string]: any;
+}
+
 export function useReportResults(props: ReportProps) {
     const queries = useSelector((state: RootState) => state.queries)
 
@@ -152,7 +160,10 @@ export function useReportResults(props: ReportProps) {
         params = output.params
     }
 
-    return useReadCypher(cypher, params, props.database)
+    console.log(cypher, params);
+
+
+    return { params, ...useReadCypher(cypher, params, props.database) }
 }
 
 

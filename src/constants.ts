@@ -12,6 +12,8 @@ import MetricTable from "./components/reports/table"
 import CalendarReport from "./components/reports/calendar"
 import HeatMap from "./components/reports/heatMap"
 import NetworkReport from "./components/reports/network"
+import SankeyReport from "./components/reports/sankey"
+import ScatterPlotReport from "./components/reports/scatterplot"
 
 export type ApocDirection = 'in' | 'out' | 'both'
 export type Condition = 'equals' | 'contains' | 'starts with' | 'ends with' | 'greater than' | 'less than' | 'greater than or equal' | 'less than or equal'
@@ -58,6 +60,9 @@ export const TYPE_BUBBLE = 'bubble'
 export const TYPE_CALENDAR = 'calendar'
 export const TYPE_HEAT_MAP = 'heatmap'
 export const TYPE_NETWORK = 'network'
+export const TYPE_SANKEY = 'sankey'
+export const TYPE_VERTICAL_SANKEY = 'verticalsankey'
+export const TYPE_SCATTER_PLOT = 'scatterplot'
 
 const barExampleQuery = `MATCH (m:Movie)-[:IN_GENRE]->(g)\nWHERE\n    m.release_date.year > 2010\nRETURN m.release_date.year AS index,\n    g.name AS key,\n    count(*) AS value\nORDER BY index DESC LIMIT 20`
 const barPreviewQuery = `UNWIND [[2012, "(no genres listed)", 1], [2012, "Action", 51], [2012, "Adventure", 24], [2012, "Animation", 20], [2012, "Children", 7], [2012, "Comedy", 77], [2012, "Crime", 27], [2012, "Documentary", 27], [2012, "Drama", 86], [2012, "Fantasy", 17], [2012, "Film-Noir", 1], [2012, "Horror", 21], [2012, "IMAX", 22], [2012, "Musical", 10], [2012, "Mystery", 5], [2012, "Romance", 25], [2012, "Sci-Fi", 25], [2012, "Thriller", 48], [2012, "War", 2], [2012, "Western", 1], [2013, "(no genres listed)", 1], [2013, "Action", 49], [2013, "Adventure", 32], [2013, "Animation", 13], [2013, "Children", 7], [2013, "Comedy", 70], [2013, "Crime", 30], [2013, "Documentary", 21], [2013, "Drama", 99], [2013, "Fantasy", 22], [2013, "Film-Noir", 1], [2013, "Horror", 12], [2013, "IMAX", 26], [2013, "Musical", 2], [2013, "Mystery", 10], [2013, "Romance", 23], [2013, "Sci-Fi", 18], [2013, "Thriller", 37], [2013, "War", 2], [2013, "Western", 1], [2014, "Action", 52], [2014, "Adventure", 27], [2014, "Animation", 14], [2014, "Children", 10], [2014, "Comedy", 89], [2014, "Crime", 28], [2014, "Documentary", 18], [2014, "Drama", 109], [2014, "Fantasy", 14], [2014, "Horror", 18], [2014, "IMAX", 15], [2014, "Musical", 2], [2014, "Mystery", 11], [2014, "Romance", 33], [2014, "Sci-Fi", 25], [2014, "Thriller", 42], [2014, "War", 8], [2014, "Western", 1], [2015, "(no genres listed)", 6], [2015, "Action", 45], [2015, "Adventure", 31], [2015, "Animation", 7], [2015, "Children", 11], [2015, "Comedy", 71], [2015, "Crime", 23], [2015, "Documentary", 17], [2015, "Drama", 83], [2015, "Fantasy", 12], [2015, "Horror", 22], [2015, "IMAX", 1], [2015, "Mystery", 11], [2015, "Romance", 15], [2015, "Sci-Fi", 25], [2015, "Thriller", 51], [2015, "War", 3], [2015, "Western", 3], [2016, "(no genres listed)", 3], [2016, "Action", 22], [2016, "Adventure", 18], [2016, "Animation", 7], [2016, "Children", 2], [2016, "Comedy", 20], [2016, "Crime", 3], [2016, "Documentary", 5], [2016, "Drama", 17], [2016, "Fantasy", 8], [2016, "Horror", 10], [2016, "Musical", 1], [2016, "Mystery", 3], [2016, "Romance", 7], [2016, "Sci-Fi", 13], [2016, "Thriller", 14], [2016, "Western", 1]] AS row RETURN row[0] as index, row[1] as key, row[2] as value`
@@ -95,6 +100,7 @@ export const reportTypes = [
         text: 'Stacked Bar Chart',
         hint: 'A Stacked Bar chart expects three keys: the `index` which represents the data series, the `key` which represents the X axis and a numerical `value` which is plotted on the Y axis.  These items are stacked on top of each other.',
         component: BarReport,
+        props: { stacked: true, },
         exampleQuery: barExampleQuery,
         previewQuery: barPreviewQuery,
     },
@@ -104,6 +110,7 @@ export const reportTypes = [
         text: 'Horizontal Bar Chart',
         hint: 'A Horizontal Bar chart expects three keys: the `index` which represents the data series, the `key` which represents the X axis and a numerical `value` which is plotted on the Y axis.',
         component: BarReport,
+        props: { layout: 'horizontal' },
         exampleQuery: barExampleQuery,
         previewQuery: barPreviewQuery,
     },
@@ -113,6 +120,7 @@ export const reportTypes = [
         text: 'Horizontal Stacked Bar Chart',
         hint: 'A Stacked Horizontal Bar chart expects three keys: the `index` which represents the data series, the `key` which represents the X axis and a numerical `value` which is plotted on the Y axis.  These items are stacked next to each other.',
         component: BarReport,
+        props: { stacked: true, layout: 'horizontal' },
         exampleQuery: barExampleQuery,
         previewQuery: barPreviewQuery,
     },
@@ -146,6 +154,9 @@ export const reportTypes = [
         value: TYPE_HORIZONTAL_FUNNEL,
         text: 'Horizontal Funnel Chart', hint: 'A Funnel chart expects rows with three keys: `id`, `value` and `label`',
         component: FunnelReport,
+        props: {
+            layout: 'horizontal'
+        },
         previewQuery: 'UNWIND [{id: "step_sent",value: 60491,label: "Sent"},{id: "step_viewed",value: 46510,label: "Viewed"},{id: "step_clicked",value: 41687,label: "Clicked"},{id: "step_add_to_card",value: 34541,label: "Add To Card"},{id: "step_purchased",value: 26351,label: "Purchased"}] AS row RETURN row.id AS id, row.value AS value, row.label AS label',
     },
     {
@@ -230,6 +241,34 @@ export const reportTypes = [
             { from: 'Enoch', to: 'All Humanity' }
            ] AS row
            RETURN row.from AS from, row.to AS to, row.value AS value`,
+    },
+    {
+        key: TYPE_SANKEY,
+        value: TYPE_SANKEY,
+        text: 'Sankey',
+        hint: 'A Sankey report expects rows with three keys: `from` and `to` and `value`',
+        component: SankeyReport,
+        previewQuery: `UNWIND [["Jane", "John", 152], ["Jane", "Ibrahim", 115], ["Raoul", "Marcel", 56], ["Raoul", "John", 106], ["Junko", "John", 84], ["Marcel", "John", 50], ["Marcel", "Junko", 82], ["Marcel", "Ibrahim", 61], ["Marcel", "Jane", 178]] AS row RETURN row[0] AS from, row[1] AS to, row[2] AS value`
+    },
+    {
+        key: TYPE_VERTICAL_SANKEY,
+        value: TYPE_VERTICAL_SANKEY,
+        text: 'Vertical Sankey',
+        hint: 'A Sankey report expects rows with three keys: `from` and `to` and `value`',
+        component: SankeyReport,
+        props: {
+            layout: 'vertical'
+        },
+        previewQuery: `UNWIND [["Jane", "John", 152], ["Jane", "Ibrahim", 115], ["Raoul", "Marcel", 56], ["Raoul", "John", 106], ["Junko", "John", 84], ["Marcel", "John", 50], ["Marcel", "Junko", 82], ["Marcel", "Ibrahim", 61], ["Marcel", "Jane", 178]] AS row RETURN row[0] AS from, row[1] AS to, row[2] AS value`
+    },
+    {
+        key: TYPE_SCATTER_PLOT,
+        value: TYPE_SCATTER_PLOT,
+        text: 'Scatter Plot Chart',
+        hint: 'A Scatter Plot chart takes the first item returned as the key and plots all other data points on the chart.  Remember to order your results by date.',
+        component: ScatterPlotReport,
+        // exampleQuery: barExampleQuery,
+        previewQuery: `UNWIND [["group A", 33, 115], ["group A", 96, 52], ["group A", 70, 30], ["group A", 46, 33], ["group A", 87, 67], ["group A", 55, 64], ["group A", 32, 11], ["group A", 63, 120], ["group A", 48, 100], ["group A", 47, 113], ["group A", 48, 23], ["group A", 79, 91], ["group A", 88, 49], ["group A", 41, 42], ["group A", 81, 6], ["group A", 29, 56], ["group A", 2, 66], ["group A", 9, 58], ["group A", 76, 96], ["group A", 92, 47], ["group A", 94, 78], ["group A", 36, 36], ["group A", 51, 47], ["group A", 71, 25], ["group A", 83, 14], ["group A", 72, 97], ["group A", 25, 115], ["group A", 18, 116], ["group A", 42, 50], ["group A", 37, 51], ["group A", 12, 102], ["group A", 2, 73], ["group A", 69, 89], ["group A", 55, 28], ["group A", 93, 62], ["group A", 20, 86], ["group A", 13, 25], ["group A", 89, 60], ["group A", 87, 46], ["group A", 80, 89], ["group A", 65, 103], ["group A", 79, 116], ["group A", 55, 39], ["group A", 30, 63], ["group A", 10, 120], ["group A", 43, 17], ["group A", 47, 19], ["group A", 30, 1], ["group A", 79, 57], ["group A", 8, 56], ["group B", 69, 119], ["group B", 3, 33], ["group B", 1, 37], ["group B", 18, 46], ["group B", 45, 32], ["group B", 46, 91], ["group B", 1, 43], ["group B", 12, 55], ["group B", 86, 77], ["group B", 70, 33], ["group B", 64, 10], ["group B", 66, 64], ["group B", 64, 120], ["group B", 19, 90], ["group B", 17, 19], ["group B", 95, 59], ["group B", 39, 114], ["group B", 15, 68], ["group B", 47, 54], ["group B", 81, 53], ["group B", 43, 67], ["group B", 42, 34], ["group B", 36, 72], ["group B", 31, 14], ["group B", 52, 69], ["group B", 26, 115], ["group B", 12, 108], ["group B", 19, 107], ["group B", 17, 114], ["group B", 57, 88], ["group B", 42, 87], ["group B", 7, 62], ["group B", 62, 88], ["group B", 22, 12], ["group B", 78, 111], ["group B", 13, 25], ["group B", 15, 90], ["group B", 7, 48], ["group B", 1, 98], ["group B", 62, 30], ["group B", 28, 39], ["group B", 0, 33], ["group B", 77, 106], ["group B", 52, 73], ["group B", 41, 113], ["group B", 92, 77], ["group B", 11, 106], ["group B", 1, 98], ["group B", 4, 104], ["group B", 35, 86], ["group C", 56, 97], ["group C", 21, 22], ["group C", 23, 30], ["group C", 4, 97], ["group C", 82, 49], ["group C", 51, 31], ["group C", 7, 47], ["group C", 5, 70], ["group C", 31, 28], ["group C", 48, 11], ["group C", 15, 59], ["group C", 57, 29], ["group C", 54, 44], ["group C", 44, 63], ["group C", 13, 115], ["group C", 23, 7], ["group C", 77, 56], ["group C", 41, 77], ["group C", 50, 104], ["group C", 97, 52], ["group C", 57, 61], ["group C", 55, 90], ["group C", 45, 40], ["group C", 61, 48], ["group C", 53, 95], ["group C", 11, 31], ["group C", 53, 109], ["group C", 26, 70], ["group C", 11, 111], ["group C", 82, 88], ["group C", 25, 84], ["group C", 55, 56], ["group C", 61, 28], ["group C", 82, 42], ["group C", 30, 79], ["group C", 94, 107], ["group C", 0, 95], ["group C", 27, 65], ["group C", 66, 104], ["group C", 84, 76], ["group C", 92, 84], ["group C", 44, 2], ["group C", 5, 112], ["group C", 78, 102], ["group C", 2, 54], ["group C", 5, 8], ["group C", 89, 63], ["group C", 17, 120], ["group C", 45, 85], ["group C", 98, 12], ["group D", 37, 72], ["group D", 57, 98], ["group D", 47, 63], ["group D", 0, 114], ["group D", 3, 63], ["group D", 64, 45], ["group D", 48, 81], ["group D", 92, 85], ["group D", 43, 36], ["group D", 12, 16], ["group D", 24, 9], ["group D", 84, 96], ["group D", 93, 52], ["group D", 39, 4], ["group D", 55, 103], ["group D", 42, 43], ["group D", 82, 70], ["group D", 6, 73], ["group D", 78, 96], ["group D", 94, 37], ["group D", 46, 104], ["group D", 31, 93], ["group D", 44, 107], ["group D", 11, 96], ["group D", 79, 116], ["group D", 97, 43], ["group D", 94, 116], ["group D", 82, 59], ["group D", 90, 8], ["group D", 83, 31], ["group D", 68, 37], ["group D", 92, 32], ["group D", 72, 105], ["group D", 11, 110], ["group D", 78, 89], ["group D", 69, 19], ["group D", 63, 24], ["group D", 23, 22], ["group D", 75, 43], ["group D", 66, 70], ["group D", 66, 118], ["group D", 48, 69], ["group D", 71, 14], ["group D", 1, 28], ["group D", 50, 24], ["group D", 48, 94], ["group D", 72, 29], ["group D", 7, 63], ["group D", 48, 120], ["group D", 87, 6], ["group E", 1, 112], ["group E", 81, 10], ["group E", 41, 21], ["group E", 7, 0], ["group E", 56, 73], ["group E", 93, 15], ["group E", 88, 15], ["group E", 12, 14], ["group E", 1, 67], ["group E", 46, 90], ["group E", 1, 61], ["group E", 52, 70], ["group E", 4, 81], ["group E", 36, 110], ["group E", 55, 61], ["group E", 78, 83], ["group E", 44, 47], ["group E", 9, 28], ["group E", 12, 94], ["group E", 49, 16], ["group E", 1, 18], ["group E", 50, 22], ["group E", 34, 62], ["group E", 35, 38], ["group E", 31, 53], ["group E", 34, 91], ["group E", 40, 7], ["group E", 22, 100], ["group E", 8, 23], ["group E", 56, 104], ["group E", 53, 71], ["group E", 9, 28], ["group E", 71, 48], ["group E", 100, 75], ["group E", 20, 55], ["group E", 27, 91], ["group E", 63, 99], ["group E", 72, 77], ["group E", 23, 107], ["group E", 35, 2], ["group E", 82, 7], ["group E", 51, 6], ["group E", 10, 20], ["group E", 50, 21], ["group E", 62, 61], ["group E", 82, 76], ["group E", 85, 81], ["group E", 19, 53], ["group E", 66, 47], ["group E", 73, 57]] AS row return row[0] AS id, row[1] AS x, row[2] AS y`,
     },
 ]
 
