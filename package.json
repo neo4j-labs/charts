@@ -1,6 +1,6 @@
 {
   "name": "@graphapps/charts",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "homepage": "./",
   "dependencies": {
     "@neode/querybuilder": "^0.1.8",
@@ -17,6 +17,7 @@
     "@nivo/radar": "^0.65.1",
     "@nivo/sankey": "^0.65.1",
     "@nivo/scatterplot": "^0.65.1",
+    "@nivo/stream": "^0.65.1",
     "@nivo/voronoi": "^0.65.1",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",

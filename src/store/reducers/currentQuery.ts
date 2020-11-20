@@ -86,11 +86,13 @@ export default function queryReducer(state: Query = initialState, action: Record
 
         case ADD_RELATIONSHIP:
             const to = `n${state.nodes.length + 1}`
+
             return {
                 ...state,
                 nodes: state.nodes.slice(0).concat({ label: action.payload.label, id: to }),
                 relationships: state.relationships.slice(0).concat({ ...action.payload, to, id: `r${state.relationships.length + 1}` })
             }
+
         case REMOVE_RELATIONSHIP:
             return removeRelationshipFromTree(action.payload.id, state)
 

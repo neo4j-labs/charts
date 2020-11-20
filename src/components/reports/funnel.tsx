@@ -1,11 +1,22 @@
 import React from 'react'
 import { ResponsiveFunnel } from '@nivo/funnel'
 import { ChartReportProps } from './ReportProps'
-import { useReportResults, recordToNative } from '../../utils'
+import { checkResultKeys, recordToNative } from '../../utils'
 import Loading from '../Loading'
+import ReportError from './error'
 
 export default function FunnelReport(props: ChartReportProps) {
-    const { records, } = props
+    const { records, first } = props
+
+    if ( !first ) {
+        return <Loading />
+    }
+
+    const error = checkResultKeys(first, ['id', 'value', 'label'])
+
+    if ( error !== false ) {
+        return <ReportError error={error} />
+    }
 
     const data = records.map(row => ({
         id: recordToNative(row.get('id')),
@@ -19,7 +30,7 @@ export default function FunnelReport(props: ChartReportProps) {
                 data={data}
                 margin={{ top: 20, right: 0, bottom: 20, left: 0 }}
                 direction={props.layout || 'vertical'}
-                colors={{ scheme: 'spectral' }}
+                colors={{ scheme: 'nivo' }}
                 borderWidth={20}
                 labelColor={{ from: 'color', modifiers: [ [ 'darker', 3 ] ] }}
                 beforeSeparatorLength={24}

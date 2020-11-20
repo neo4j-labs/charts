@@ -1,11 +1,22 @@
 import React from 'react'
 import { ResponsiveChord } from '@nivo/chord'
-import Loading from '../Loading'
-import { useReportResults, recordToNative } from '../../utils'
+import { checkResultKeys, recordToNative } from '../../utils'
 import { ChartReportProps } from './ReportProps'
+import Loading from '../Loading'
+import ReportError from './error'
 
 export default function ChordReport(props: ChartReportProps) {
-    const { records, } = props
+    const { records, first } = props
+
+    if ( !first ) {
+        return <Loading />
+    }
+
+    const error = checkResultKeys(first, ['from', 'to', 'value'])
+
+    if ( error !== false ) {
+        return <ReportError error={error} />
+    }
 
     const data = records.reduce((acc: Record<string, any>[], row: Record<string, any>) => {
         const from = recordToNative(row.get('from'))

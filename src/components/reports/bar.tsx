@@ -1,44 +1,56 @@
 import React from 'react'
 import { ResponsiveBar } from '@nivo/bar'
 import { ChartReportProps } from './ReportProps'
-import { recordToNative } from '../../utils'
+import { checkResultKeys, recordToNative } from '../../utils'
+import ReportError from './error'
+import Loading from '../Loading'
 
 export default function BarReport(props: ChartReportProps) {
-    const { records, } = props
+    const { records, first } = props
+
+    if ( !first ) {
+        return <Loading />
+    }
+
+    const error = checkResultKeys(first, ['index', 'key', 'value'])
+
+    if ( error !== false ) {
+        return <ReportError error={error} />
+    }
 
     const keys: string[] = []
 
-        const data: Record<string, any>[] = records.reduce((data: Record<string, any>[], row: Record<string, any>) => {
-            const index = recordToNative(row.get('index'))
-            const idx = data.findIndex(item => item.index === index)
+    const data: Record<string, any>[] = records.reduce((data: Record<string, any>[], row: Record<string, any>) => {
+        const index = recordToNative(row.get('index'))
+        const idx = data.findIndex(item => item.index === index)
 
-            const key = recordToNative(row.get('key'))
-            const value = recordToNative(row.get('value'))
+        const key = recordToNative(row.get('key'))
+        const value = recordToNative(row.get('value'))
 
-            if ( !keys.includes(key) ) {
-                keys.push(key)
-            }
+        if ( !keys.includes(key) ) {
+            keys.push(key)
+        }
 
-            if ( idx > -1 ) {
-                data[ idx ][ key ] = value
-            }
-            else {
-                data.push({ index, [key]: value  })
-            }
+        if ( idx > -1 ) {
+            data[ idx ][ key ] = value
+        }
+        else {
+            data.push({ index, [key]: value  })
+        }
 
-            return data
-        }, [])
-            .map(row => {
-                keys.forEach(key => {
-                    if ( !row.hasOwnProperty(key) ) {
-                        row[ key ] = 0
-                    }
-                })
-
-                return row
+        return data
+    }, [])
+        .map(row => {
+            keys.forEach(key => {
+                if ( !row.hasOwnProperty(key) ) {
+                    row[ key ] = 0
+                }
             })
 
-        return <ResponsiveBar
+            return row
+        })
+
+    return <ResponsiveBar
         layout={props.layout}
         groupMode={props.stacked ? 'stacked' : 'grouped'}
         data={data}

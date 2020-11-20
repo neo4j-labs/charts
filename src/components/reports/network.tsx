@@ -1,14 +1,22 @@
 import React from 'react'
 import { ResponsiveNetwork } from '@nivo/network'
-import Loading from '../Loading'
-import { useReportResults, recordToNative } from '../../utils'
+import { checkResultKeys, recordToNative } from '../../utils'
 import { ChartReportProps } from './ReportProps'
-// import {
-//     colorSchemes
-//  } from '@nivo/colors'
+import ReportError from './error'
+import Loading from '../Loading'
 
 export default function NetworkReport(props: ChartReportProps) {
-    const { records, } = props
+    const { records, first } = props
+
+    if ( !first ) {
+        return <Loading />
+    }
+
+    const error = checkResultKeys(first, ['index', 'key', 'value'])
+
+    if ( error !== false ) {
+        return <ReportError error={error} />
+    }
 
     const nodes = records.reduce((acc: Record<string, any>[], row) => {
         const from = recordToNative(row.get('from'))

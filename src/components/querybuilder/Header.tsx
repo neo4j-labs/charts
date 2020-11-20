@@ -27,7 +27,7 @@ export default function QueryHeader() {
     return (
         <div className="query-header flex flex-row flex-grow-0 bg-white border-b border-gray-300 p-4">
             <div className="flex justify-top flex-grow-0 mr-2 py-2">
-                <Link className="block bg-transparent font-bold focus:outline-none" to="/">
+                <Link className="block bg-transparent font-bold focus:outline-none" to="/queries">
                     <span className="text-blue-600 mr-2">Queries</span>
                     <span className="text-gray-400"> / </span>
                 </Link>

@@ -20,6 +20,7 @@ import NetworkReport from './network';
 import SankeyReport from './sankey';
 import { ReportProps, useReportResults } from '../../utils';
 import Loading from '../Loading';
+import ReportError from './error';
 
 
 function ExpandIcon({ onClick }) {
@@ -51,6 +52,7 @@ function ContractIcon({ onClick }) {
         </svg>
     )
 }
+
 
 export default function Report(props: ReportProps) {
     const dispatch = useDispatch();
@@ -93,88 +95,93 @@ export default function Report(props: ReportProps) {
 
     let content = <pre>{JSON.stringify(props, null, 2)}</pre>;
 
-    if (tab === 'edit') {
-        content = <ReportForm dashboard={props.dashboard} report={props} submitText="Update Report" onSubmit={handleUpdateReport} />;
-    }
-    else if ( loading ) {
-        content = <Loading />
-    }
-    else if ( error ) {
-        content = <div className="font-bold rounded-md border border-red-600 p-2 text-red-600">{error.message}</div>
-    }
-    else if ( !records?.length ) {
-        content = <div className="font-bold rounded-md text-green-600">
-            There were no results returned for this query
-            </div>
-    }
-    else if (props.type === TYPE_METRIC) {
-        content = <MetricReport records={records} first={first} />;
-    }
-    else if (props.type === TYPE_TABLE) {
-        content = <TableReport records={records} first={first} />;
-    }
-    else if (props.type === TYPE_LINE) {
-        content = <LineReport records={records} first={first} />;
-    }
-    else if (props.type === TYPE_BAR) {
-        content = <BarReport records={records} first={first} />;
-    }
-    else if (props.type === TYPE_STACKED_BAR) {
-        content = <BarReport records={records} first={first} stacked={true} />;
-    }
-    else if (props.type === TYPE_HORIZONTAL_BAR) {
-        content = <BarReport records={records} first={first} layout="horizontal" />;
-    }
-    else if (props.type === TYPE_HORIZONTAL_STACKED_BAR) {
-        content = <BarReport records={records} first={first} stacked={true} layout="horizontal" />;
-    }
-    else if (props.type === TYPE_HORIZONTAL_STACKED_BAR) {
-        content = <BarReport records={records} first={first} stacked={true} layout="horizontal" />;
-    }
-    else if (props.type === TYPE_RADAR) {
-        content = <RadarReport records={records} first={first} />;
-    }
-    else if (props.type === TYPE_FUNNEL) {
-        content = <FunnelReport records={records} first={first} />;
-    }
-    else if (props.type === TYPE_HORIZONTAL_FUNNEL) {
-        content = <FunnelReport records={records} first={first} layout="horizontal" />;
-    }
-    else if (props.type === TYPE_BUMP) {
-        content = <BumpReport records={records} first={first} />;
-    }
-    else if (props.type === TYPE_AREA_BUMP) {
-        content = <AreaBumpReport records={records} first={first} />;
-    }
-    else if (props.type === TYPE_CHORD) {
-        content = <ChordReport records={records} first={first} />;
-    }
-    else if (props.type === TYPE_BUBBLE) {
-        content = <BubbleReport records={records} first={first} />;
-    }
-    else if (props.type === TYPE_CALENDAR) {
-        content = <CalendarReport records={records} first={first} />;
-    }
-    else if (props.type === TYPE_HEAT_MAP) {
-        content = <HeatMap records={records} first={first} />;
-    }
-    else if (props.type === TYPE_NETWORK) {
-        content = <NetworkReport records={records} first={first} />;
-    }
-    else if (props.type === TYPE_SANKEY) {
-        content = <SankeyReport records={records} first={first} />;
-    }
-    else if (props.type === TYPE_VERTICAL_SANKEY) {
-        content = <SankeyReport records={records} first={first} layout="vertical" />;
-    }
-    else {
-        const report = reportTypes.find(report => report.value === props.type)
 
-
-        if ( report ) {
-            const componentProps = report?.props || {}
-            content = report.component({ records, first, ...componentProps,  })
+    try {
+        if (tab === 'edit') {
+            content = <ReportForm dashboard={props.dashboard} report={props} submitText="Update Report" onSubmit={handleUpdateReport} />;
         }
+        else if ( loading ) {
+            content = <Loading />
+        }
+        else if ( error ) {
+            content = ReportError({ error })
+        }
+        else if ( !records?.length ) {
+            content = <div className="font-bold rounded-md text-green-600">
+                No results were returned for this query
+            </div>
+        }
+        else if (props.type === TYPE_METRIC) {
+            content = <MetricReport records={records} first={first} />;
+        }
+        else if (props.type === TYPE_TABLE) {
+            content = <TableReport records={records} first={first} />;
+        }
+        else if (props.type === TYPE_LINE) {
+            content = <LineReport records={records} first={first} />;
+        }
+        else if (props.type === TYPE_BAR) {
+            content = <BarReport records={records} first={first} />;
+        }
+        else if (props.type === TYPE_STACKED_BAR) {
+            content = <BarReport records={records} first={first} stacked={true} />;
+        }
+        else if (props.type === TYPE_HORIZONTAL_BAR) {
+            content = <BarReport records={records} first={first} layout="horizontal" />;
+        }
+        else if (props.type === TYPE_HORIZONTAL_STACKED_BAR) {
+            content = <BarReport records={records} first={first} stacked={true} layout="horizontal" />;
+        }
+        else if (props.type === TYPE_HORIZONTAL_STACKED_BAR) {
+            content = <BarReport records={records} first={first} stacked={true} layout="horizontal" />;
+        }
+        else if (props.type === TYPE_RADAR) {
+            content = <RadarReport records={records} first={first} />;
+        }
+        else if (props.type === TYPE_FUNNEL) {
+            content = <FunnelReport records={records} first={first} />;
+        }
+        else if (props.type === TYPE_HORIZONTAL_FUNNEL) {
+            content = <FunnelReport records={records} first={first} layout="horizontal" />;
+        }
+        else if (props.type === TYPE_BUMP) {
+            content = <BumpReport records={records} first={first} />;
+        }
+        else if (props.type === TYPE_AREA_BUMP) {
+            content = <AreaBumpReport records={records} first={first} />;
+        }
+        else if (props.type === TYPE_CHORD) {
+            content = <ChordReport records={records} first={first} />;
+        }
+        else if (props.type === TYPE_BUBBLE) {
+            content = <BubbleReport records={records} first={first} />;
+        }
+        else if (props.type === TYPE_CALENDAR) {
+            content = <CalendarReport records={records} first={first} />;
+        }
+        else if (props.type === TYPE_HEAT_MAP) {
+            content = <HeatMap records={records} first={first} />;
+        }
+        else if (props.type === TYPE_NETWORK) {
+            content = <NetworkReport records={records} first={first} />;
+        }
+        else if (props.type === TYPE_SANKEY) {
+            content = <SankeyReport records={records} first={first} />;
+        }
+        else if (props.type === TYPE_VERTICAL_SANKEY) {
+            content = <SankeyReport records={records} first={first} layout="vertical" />;
+        }
+        else {
+            const report = reportTypes.find(report => report.value === props.type)
+
+            if ( report ) {
+                const componentProps = report?.props || {}
+                content = report.component({ records, first, ...componentProps,  })
+            }
+        }
+    }
+    catch (error) {
+        content = ReportError({ error })
     }
 
     return (

@@ -1,12 +1,22 @@
 import React from 'react'
 import { AreaBumpInputSerie, ResponsiveAreaBump } from '@nivo/bump'
 import { ChartReportProps } from './ReportProps'
-import { recordToNative } from '../../utils'
+import { checkResultKeys, recordToNative } from '../../utils'
+import ReportError from './error'
 import Loading from '../Loading'
 
-
 export default function AreaBumpReport(props: ChartReportProps) {
-    const { records } = props
+    const { records, first } = props
+
+    if ( !first ) {
+        return <Loading />
+    }
+
+    const error = checkResultKeys(first, ['id', 'x', 'y'])
+
+    if ( error !== false ) {
+        return <ReportError error={error} />
+    }
 
     const data: AreaBumpInputSerie[] = records.map(row => ({
         id: recordToNative(row.get('id')),

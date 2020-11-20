@@ -160,9 +160,6 @@ export function useReportResults(props: ReportProps) {
         params = output.params
     }
 
-    console.log(cypher, params);
-
-
     return { params, ...useReadCypher(cypher, params, props.database) }
 }
 
@@ -193,4 +190,13 @@ export function resultToNative(result: QueryResult): Record<string, any> {
     if (!result) return {}
 
     return result.records.map(row => recordToNative(row))
+}
+export function checkResultKeys(first: Neo4jRecord, keys: string[]) {
+    const missing = keys.filter(key => !first.keys.includes(key))
+
+    if ( missing.length > 0 ) {
+        return new Error(`The query is missing the following key${missing.length > 1 ? 's' : ''}: ${missing.join(', ')}.  The expected keys are: ${keys.join(', ')}`)
+    }
+
+    return false
 }

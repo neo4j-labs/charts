@@ -1646,6 +1646,20 @@
     lodash "^4.17.11"
     react-motion "^0.5.2"
 
+"@nivo/stream@^0.65.1":
+  version "0.65.1"
+  resolved "https://registry.yarnpkg.com/@nivo/stream/-/stream-0.65.1.tgz#ce543dbd6a389bbc41d719b0739d954cb1d7f042"
+  integrity sha512-JYHImy6bSfsj7fV8MPL9jcnWhZjyubf/rOdFPIRgJ3m6MXBcfDT/0X8EetRsqA7SFh8e87fBTks6J4qmUgRpCQ==
+  dependencies:
+    "@nivo/axes" "0.65.1"
+    "@nivo/colors" "0.65.1"
+    "@nivo/legends" "0.65.1"
+    "@nivo/scales" "0.65.0"
+    "@nivo/tooltip" "0.65.1"
+    d3-scale "^3.0.0"
+    d3-shape "^1.3.5"
+    react-spring "9.0.0-rc.3"
+
 "@nivo/tooltip@0.65.1":
   version "0.65.1"
   resolved "https://registry.yarnpkg.com/@nivo/tooltip/-/tooltip-0.65.1.tgz#7b3215e54dbfbaa2b4066b764f74c85137a8a576"

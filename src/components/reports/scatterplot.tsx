@@ -1,10 +1,22 @@
 import React from 'react'
 import { ResponsiveScatterPlot, Serie } from '@nivo/scatterplot'
 import { ChartReportProps } from './ReportProps'
-import { recordToNative } from '../../utils'
+import { checkResultKeys, recordToNative } from '../../utils'
+import Loading from '../Loading'
+import ReportError from './error'
 
 export default function ScatterPlotReport(props: ChartReportProps) {
-    const { records } = props
+    const { records, first } = props
+
+    if ( !first ) {
+        return <Loading />
+    }
+
+    const error = checkResultKeys(first, ['index', 'key', 'value'])
+
+    if ( error !== false ) {
+        return <ReportError error={error} />
+    }
 
     const data: Serie[] = records.map(row => ({
         id: recordToNative(row.get('id')),
@@ -27,9 +39,6 @@ export default function ScatterPlotReport(props: ChartReportProps) {
 
             return acc as Serie[]
         }, [] as Serie[])
-
-    console.log(data);
-
 
     return (
         <ResponsiveScatterPlot

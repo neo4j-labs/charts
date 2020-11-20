@@ -1,11 +1,22 @@
 import React from 'react'
 import { ResponsiveBubble } from '@nivo/circle-packing'
-import { recordToNative } from '../../utils'
+import { checkResultKeys, recordToNative } from '../../utils'
 import { ChartReportProps } from './ReportProps'
+import ReportError from './error'
+import Loading from '../Loading'
 
 export default function BubbleReport(props: ChartReportProps) {
-    const { records, } = props
+    const { records, first } = props
 
+    if ( !first ) {
+        return <Loading />
+    }
+
+    const error = checkResultKeys(first, ['from', 'to', 'value'])
+
+    if ( error !== false ) {
+        return <ReportError error={error} />
+    }
 
     const hierarchy = records.reduce((hierarchy: Record<string, any>[], row: Record<string, any>) => {
         const from = recordToNative(row.get('from'))

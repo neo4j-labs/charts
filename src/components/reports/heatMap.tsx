@@ -1,11 +1,22 @@
 import { ResponsiveHeatMap } from '@nivo/heatmap';
 import React from 'react'
-import { recordToNative, useReportResults } from '../../utils';
+import { checkResultKeys, recordToNative } from '../../utils';
 import Loading from '../Loading';
+import ReportError from './error';
 import { ChartReportProps } from './ReportProps';
 
 export default function HeatMap(props: ChartReportProps) {
-    const { records, } = props
+    const { records, first } = props
+
+    if ( !first ) {
+        return <Loading />
+    }
+
+    const error = checkResultKeys(first, ['index', 'key', 'value'])
+
+    if ( error !== false ) {
+        return <ReportError error={error} />
+    }
 
     const keys: string[] = []
     const data: Record<string, any>[] = records.reduce((data: Record<string, any>[], row: Record<string, any>) => {

@@ -2,6 +2,7 @@ import React from 'react'
 import { ResponsiveLine } from '@nivo/line'
 import { ChartReportProps } from './ReportProps'
 import { recordToNative } from '../../utils'
+import ReportError from './error'
 
 interface LineChartData {
     id: string;
@@ -13,6 +14,10 @@ export default function LineReport(props: ChartReportProps) {
 
     const label = first!.keys[0]
     const keys = first!.keys.slice(1)
+
+    if ( !keys.length ) {
+        return <ReportError error={{message: 'This report was expecting three columns'}} />
+    }
 
     const data: LineChartData[] = keys.map(key => ({
         // TODO: colour

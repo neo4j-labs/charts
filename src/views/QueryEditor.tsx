@@ -2,11 +2,11 @@
 import React, { useEffect } from 'react'
 import { Redirect } from 'react-router-dom'
 
-import useSchema from '../hooks/use-schema';
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../store'
 import { loadQuery } from '../store/actions';
 import QueryEditorForm from '../components/querybuilder';
+import { useSchema } from 'use-neo4j';
 
 export default function QueryEditor({ match }) {
     const { loading, labels, types } = useSchema()

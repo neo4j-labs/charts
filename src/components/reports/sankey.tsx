@@ -1,10 +1,22 @@
 import React from 'react'
 import { ResponsiveSankey, SankeyDataNode } from '@nivo/sankey'
-import { recordToNative } from '../../utils'
+import { checkResultKeys, recordToNative } from '../../utils'
 import { ChartReportProps } from './ReportProps'
+import ReportError from './error'
+import Loading from '../Loading'
 
 export default function SankeyReport(props: ChartReportProps) {
-    const { records, } = props
+    const { records, first } = props
+
+    if ( !first ) {
+        return <Loading />
+    }
+
+    const error = checkResultKeys(first, ['from', 'to', 'value'])
+
+    if ( error !== false ) {
+        return <ReportError error={error} />
+    }
 
     const nodes: SankeyDataNode[] = records.reduce((acc: SankeyDataNode[], row) => {
         const from = recordToNative(row.get('from'))
