@@ -12,6 +12,7 @@
 /build
 /dist
 .env
+package
 
 # misc
 .DS_Store
