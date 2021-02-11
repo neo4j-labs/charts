@@ -46,3 +46,6 @@ npx @neo4j/code-signer --verify \
   --root-cert ~/.ssh/neo4j_desktop.cert
 
 npm publish --access public *.tgz
+
+# Deploy to S3
+aws s3 sync --acl public-read dist s3://charts.graphapp.io/
