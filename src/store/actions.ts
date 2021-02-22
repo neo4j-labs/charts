@@ -118,7 +118,7 @@ export function addReport(dashboard: string, name: string, database: string | un
     }
 }
 
-export function updateReport(id: string, dashboard: string, name: string, database: string | undefined,  type: string, source: string, query: string, columns: number, order: number) {
+export function updateReport(id: string, dashboard: string, name: string, database: string | undefined,  type: string, source: string, query: string, columns: number, rows: number, order: number) {
     return {
         type: UPDATE_REPORT,
         payload: {
@@ -130,6 +130,7 @@ export function updateReport(id: string, dashboard: string, name: string, databa
             source,
             query,
             columns,
+            rows,
             order,
         },
     }

@@ -22,6 +22,7 @@ interface CardProps {
     children?: any;
     actions?: Action[]
     expanded?: boolean;
+    rows?: number;
 }
 
 export default function Card(props: CardProps) {
@@ -32,7 +33,7 @@ export default function Card(props: CardProps) {
     let titleClasses = `card-title text-xl text-gray-700 font-bold pb-4 cursor-pointer border-b-2 ${props.titleActive ? 'border-blue-600' : 'border-transparent'}`
 
     let cardClasses = `card bg-white  p-4`
-    let containerClasses = `flex flex-col overflow-auto text-gray-600`
+    let containerClasses = `container flex flex-col overflow-auto text-gray-600`
 
     if ( props.expanded ) {
         cardClasses += ` absolute inset-0 z-20`
@@ -45,7 +46,7 @@ export default function Card(props: CardProps) {
 
     return (
         <div className={cardClasses}>
-            <div className="card-header border-b border-gray-200 pt-2 flex flex-row align-baseline mb-2">
+            <div className={`card-header border-b border-gray-200 pt-2 flex flex-row align-baseline mb-2`}>
                 <h1 className={titleClasses} onClick={handleTitleClick}>{ props.title }</h1>
                 <div className="card-spacer flex-grow"></div>
 

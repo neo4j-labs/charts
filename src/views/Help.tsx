@@ -45,15 +45,22 @@ export default function Help() {
                 sectionText="Help"
             />
 
-            <div className="container mx-auto pb-16 text-gray-800">
-                <div className="p-8">
+            <div className="container mx-auto text-gray-800">
+                <div className="p-8 pb-0">
                     <h2 className="font-bold text-gray-800 mb-4 px-2" style={{fontSize: '2rem'}}>Getting Started</h2>
+                </div>
+
+                <div className="p-8">
+                    <p className="px-2">
+                        <strong>Charts</strong> is a Graph App that allows you to quickly create and share dashboards backed by Neo4j data.
+                        Charts allows you to create multiple dashboards and reports using a single connection supplied by Neo4j Desktop.
+                    </p>
                 </div>
 
                 <div className="p-8">
                     <h2 className="font-bold text-gray-800 mb-12 border-b border-gray-400 pb-4 px-2" style={{fontSize: '1.4rem'}}>Report Types</h2>
 
-                    {reportTypes.map(report => <ExampleReport key={report.value}  {...report} />)}
+                    {reportTypes.map(report => <ExampleReport {...report} />)}
 
 
                 </div>

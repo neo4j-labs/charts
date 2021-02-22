@@ -99,7 +99,7 @@ export default function BarReport(props: ChartReportProps) {
                 ]
             }
         ]}
-        animate={true}
+        animate={false}
         motionStiffness={90}
         motionDamping={15}
 

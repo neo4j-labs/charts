@@ -12,7 +12,7 @@ export default function NetworkReport(props: ChartReportProps) {
         return <Loading />
     }
 
-    const error = checkResultKeys(first, ['index', 'key', 'value'])
+    const error = checkResultKeys(first, ['from', 'to'])
 
     if ( error !== false ) {
         return <ReportError error={error} />

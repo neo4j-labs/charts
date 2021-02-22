@@ -248,7 +248,7 @@ export const reportTypes = [
         key: TYPE_SANKEY,
         value: TYPE_SANKEY,
         text: 'Sankey',
-        hint: 'A Sankey report expects rows with three keys: `from` and `to` and `value`',
+        hint: 'A Sankey report expects rows with three keys: `from` and `to` and `value`.  Please note that the Sankey chart doesn\'t handle circular values well, so you may need to add a level prefix if your data contains circular references.',
         component: SankeyReport,
         previewQuery: `UNWIND [["Jane", "John", 152], ["Jane", "Ibrahim", 115], ["Raoul", "Marcel", 56], ["Raoul", "John", 106], ["Junko", "John", 84], ["Marcel", "John", 50], ["Marcel", "Junko", 82], ["Marcel", "Ibrahim", 61], ["Marcel", "Jane", 178]] AS row RETURN row[0] AS from, row[1] AS to, row[2] AS value`
     },
@@ -256,7 +256,7 @@ export const reportTypes = [
         key: TYPE_VERTICAL_SANKEY,
         value: TYPE_VERTICAL_SANKEY,
         text: 'Vertical Sankey',
-        hint: 'A Sankey report expects rows with three keys: `from` and `to` and `value`',
+        hint: 'A Sankey report expects rows with three keys: `from` and `to` and `value`.   Please note that the Sankey chart doesn\'t handle circular values well, so you may need to add a level prefix if your data contains circular references.',
         component: SankeyReport,
         props: {
             layout: 'vertical'

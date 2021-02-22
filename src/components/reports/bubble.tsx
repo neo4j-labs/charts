@@ -93,7 +93,7 @@ export default function BubbleReport(props: ChartReportProps) {
                 borderWidth={1}
                 borderColor={{ from: 'color' }}
                 fill={[ { match: { depth: 1 }, id: 'lines' } ]}
-                animate={true}
+                animate={false}
                 motionStiffness={90}
                 motionDamping={12}
             />

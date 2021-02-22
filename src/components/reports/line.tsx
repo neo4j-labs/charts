@@ -12,7 +12,7 @@ interface LineChartData {
 export default function LineReport(props: ChartReportProps) {
     const { records, first, } = props
 
-    const label = first!.keys[0]
+    const label = first!.keys[0] as string
     const keys = first!.keys.slice(1)
 
     if ( !keys.length ) {
@@ -21,7 +21,7 @@ export default function LineReport(props: ChartReportProps) {
 
     const data: LineChartData[] = keys.map(key => ({
         // TODO: colour
-        id: key,
+        id: key as string,
         data: []
     }))
 

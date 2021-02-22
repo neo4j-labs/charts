@@ -12,7 +12,7 @@ export default function ScatterPlotReport(props: ChartReportProps) {
         return <Loading />
     }
 
-    const error = checkResultKeys(first, ['index', 'key', 'value'])
+    const error = checkResultKeys(first, ['id', 'x', 'y'])
 
     if ( error !== false ) {
         return <ReportError error={error} />

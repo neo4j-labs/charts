@@ -1,3 +1,7 @@
+## 0.1.8
+
+- Small bug fixes around crashing reports and help pages.
+
 ## 0.1.7
 
 - Fixed scrolling issue in modal windows on screens with a smaller height

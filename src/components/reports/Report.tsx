@@ -68,8 +68,8 @@ export default function Report(props: ReportProps) {
         }
     };
 
-    const handleUpdateReport = (dashboard, name, database, type, source, query, columns) => {
-        dispatch(updateReport(props.id, dashboard, name, database, type, source, query, columns, props.order));
+    const handleUpdateReport = (dashboard, name, database, type, source, query, columns, rows) => {
+        dispatch(updateReport(props.id, dashboard, name, database, type, source, query, columns, rows, props.order));
 
         setTab('report');
     };
@@ -185,7 +185,7 @@ export default function Report(props: ReportProps) {
     }
 
     return (
-        <Card title={props.name} titleActive={tab === 'report'} tabs={tabs} onTitleClick={() => setTab('report')} expanded={expanded}>
+        <Card title={props.name} titleActive={tab === 'report'} tabs={tabs} onTitleClick={() => setTab('report')} expanded={expanded} rows={props.rows}>
             {content}
         </Card>
     );

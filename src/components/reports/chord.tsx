@@ -81,7 +81,7 @@ export default function ChordReport(props: ChartReportProps) {
                 arcHoverOthersOpacity={0.25}
                 ribbonHoverOpacity={0.75}
                 ribbonHoverOthersOpacity={0.25}
-                animate={true}
+                animate={false}
                 motionStiffness={90}
                 motionDamping={7}
             />

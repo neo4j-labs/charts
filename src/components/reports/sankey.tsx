@@ -43,12 +43,14 @@ export default function SankeyReport(props: ChartReportProps) {
         target: recordToNative(row.get('to')),
         value: recordToNative(row.get('value'))
     }), [])
+        .filter(row => row.source !== row.target)
 
     return (
         <div className="h-full w-full overflow-hidden">
             <ResponsiveSankey
                 data={{ nodes, links }}
                 margin={{ top: 12, right: 0, bottom: 0, left: 0 }}
+                animate={false}
                 align="justify"
                 // @ts-ignore
                 layout={props.layout || 'horizontal'}

@@ -21,6 +21,7 @@ export interface Report {
     savedAt: Date;
 
     columns: number;
+    rows: number;
 
     type: string; // TODO: type
     source: Source; // TODO: type

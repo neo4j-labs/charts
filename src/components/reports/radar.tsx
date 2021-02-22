@@ -63,7 +63,7 @@ export default function RadarReport(props: ChartReportProps) {
             colors={{ scheme: 'nivo' }}
             fillOpacity={0.25}
             blendMode="multiply"
-            animate={true}
+            animate={false}
 
             isInteractive={true}
             legends={[
