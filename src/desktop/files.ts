@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { client, neo4jDesktopGraphAppId, neo4jDesktopProjectId, relateApiToken, relateUrl } from './client';
+import { client, neo4jDesktopGraphAppId, relateProjectId, relateApiToken, relateUrl } from './client';
 
 const GET_PROJECT_FILES = gql`
     query GetProject($projectId: String!) {
@@ -50,7 +50,7 @@ export function saveFile(filePath: string, contents: string) {
     return client.mutate({
         mutation: DELETE_PROJECT_FILE,
         variables: {
-            projectId: neo4jDesktopProjectId,
+            projectId: relateProjectId,
             filePath: filePath,
         }
     })
@@ -59,7 +59,7 @@ export function saveFile(filePath: string, contents: string) {
             return client.mutate({
                 mutation: ADD_PROJECT_FILE,
                 variables: {
-                    projectId: neo4jDesktopProjectId,
+                    projectId: relateProjectId,
                     fileUpload: new File([contents], filePath),
                 }
             })
@@ -75,12 +75,15 @@ interface ProjectFile {
 }
 
 export function getProjectFiles(): Promise<ProjectFile[]> {
-    if ( !relateApiToken ) return Promise.resolve([])
+    if ( !relateApiToken ) {
+        console.log('no api token')
+        return Promise.resolve([])
+    }
 
     return client.query({
         query: GET_PROJECT_FILES,
         variables: {
-            projectId: neo4jDesktopProjectId,
+            projectId: relateProjectId,
             filterValue: 'json',
         }
     })

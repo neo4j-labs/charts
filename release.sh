@@ -49,3 +49,6 @@ npm publish --access public *.tgz
 
 # Deploy to S3
 aws s3 sync --acl public-read dist s3://charts.graphapp.io/
+
+# Push to github
+git push origin main

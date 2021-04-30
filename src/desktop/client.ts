@@ -8,8 +8,8 @@ const searchParams = new URL(url).searchParams
 export const isDesktop = searchParams.has('relateApiToken')
 export const relateUrl = searchParams.get('relateUrl')
 export const relateApiToken = searchParams.get('relateApiToken')
-export const neo4jDesktopProjectId = searchParams.get('neo4jDesktopProjectId') || "project-1da821f1-357b-4d61-b349-95ae21189360"
-export const neo4jDesktopGraphAppId = searchParams.get('neo4jDesktopGraphAppId') || 'neo4j-bloom'
+export const relateProjectId = searchParams.get('relateProjectId')
+export const neo4jDesktopGraphAppId = searchParams.get('neo4jDesktopGraphAppId')
 
 // typePolicies allow apollo cache to use these fields as 'id'
 // for automated cache updates when updating a single existing entity
