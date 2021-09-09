@@ -1,4 +1,4 @@
-import { getProjectFiles, relateApiToken,  getFileContentsAsJson, saveFile } from "./desktop";
+import { getProjectFiles, relateApiToken, getFileContentsAsJson, saveFile } from "./desktop";
 import store from "./store";
 import { init, QueriesState, Query } from "./store/actions";
 import { Dashboard, Report, DashboardsState } from "./store/reducers/dashboards";
@@ -19,7 +19,7 @@ interface InitialState extends DashboardState {
 }
 
 export function saveDashboards(state: DashboardsState): DashboardsState {
-    if ( relateApiToken ) {
+    if (relateApiToken) {
         saveFile(DASHBOARD_FILE, JSON.stringify(state))
     }
 
@@ -29,7 +29,7 @@ export function saveDashboards(state: DashboardsState): DashboardsState {
 }
 
 export function saveQueries(state: QueriesState): QueriesState {
-    if ( relateApiToken ) {
+    if (relateApiToken) {
         saveFile(QUERIES_FILE, JSON.stringify(state))
     }
 
@@ -39,14 +39,24 @@ export function saveQueries(state: QueriesState): QueriesState {
 }
 
 
-function getDashboardDataFromDesktop(files): Promise<DashboardState> {
-    const dashboardsFile = files.find(file => file.name === DASHBOARD_FILE)
+function getDashboardDataFromLocalStorage(): Promise<DashboardState> {
+    const raw = window.localStorage.getItem(DASHBOARD_LOCAL_STORAGE_KEY)
 
-    if ( !dashboardsFile ) {
+    if (raw === null) {
         return Promise.resolve({
             dashboards: [],
             reports: [],
         })
+    }
+
+    return Promise.resolve(JSON.parse(raw))
+}
+
+function getDashboardDataFromDesktop(files): Promise<DashboardState> {
+    const dashboardsFile = files.find(file => file.name === DASHBOARD_FILE)
+
+    if (!dashboardsFile) {
+        return getDashboardDataFromLocalStorage()
     }
 
     return getFileContentsAsJson(dashboardsFile.name, dashboardsFile.downloadToken)
@@ -64,7 +74,7 @@ function getDashboardDataFromDesktop(files): Promise<DashboardState> {
 function getQueryDataFromDesktop(files): Promise<Query[]> {
     const queriesFile = files.find(file => file.name === QUERIES_FILE)
 
-    if ( !queriesFile ) {
+    if (!queriesFile) {
         return Promise.resolve([])
     }
 
@@ -88,7 +98,7 @@ function getStateFromDesktop(): Promise<InitialState> {
                 getQueryDataFromDesktop(files),
             ])
         })
-        .then(([ dashboardData, queries ]) => ({
+        .then(([dashboardData, queries]) => ({
             dashboards: dashboardData ? (dashboardData as Record<string, any>).dashboards : [],
             reports: dashboardData ? (dashboardData as Record<string, any>).reports : [],
             queries: queries || []
@@ -101,24 +111,24 @@ function getStateFromDesktop(): Promise<InitialState> {
 }
 
 function getStateFromLocalStorage(): Promise<InitialState> {
-    const { dashboards, reports } = JSON.parse( window.localStorage.getItem(DASHBOARD_LOCAL_STORAGE_KEY) || '{"dashboards":[],"reports":[]}' )
-    const queries = JSON.parse( window.localStorage.getItem(QUERIES_LOCAL_STORAGE_KEY) || '[]' )
+    const { dashboards, reports } = JSON.parse(window.localStorage.getItem(DASHBOARD_LOCAL_STORAGE_KEY) || '{"dashboards":[],"reports":[]}')
+    const queries = JSON.parse(window.localStorage.getItem(QUERIES_LOCAL_STORAGE_KEY) || '[]')
 
     return Promise.resolve({ dashboards, reports, queries })
 }
 
 
 export function getInitialState() {
-    if ( relateApiToken ) {
+    if (relateApiToken) {
         getStateFromDesktop()
             .then((state: InitialState) => {
                 console.log('state from', state);
 
-                store.dispatch(init( state.dashboards, state.reports, state.queries ))
+                store.dispatch(init(state.dashboards, state.reports, state.queries))
             })
     }
     else {
         getStateFromLocalStorage()
-            .then((state: InitialState) => store.dispatch(init( state.dashboards, state.reports, state.queries )) )
+            .then((state: InitialState) => store.dispatch(init(state.dashboards, state.reports, state.queries)))
     }
-  }
+}

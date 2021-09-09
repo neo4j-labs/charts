@@ -64,6 +64,7 @@ export const DELETE_DASHBOARD = 'DELETE_DASHBOARD'
 export const ADD_REPORT = 'ADD_REPORT'
 export const UPDATE_REPORT = 'UPDATE_REPORT'
 export const DELETE_REPORT = 'DELETE_REPORT'
+export const REORDER_REPORTS = 'REORDER_REPORTS'
 
 export const ADD_QUERY = 'ADD_QUERY'
 export const UPDATE_QUERY = 'UPDATE_QUERY'
@@ -133,6 +134,15 @@ export function updateReport(id: string, dashboard: string, name: string, databa
             rows,
             order,
         },
+    }
+}
+
+export function reorderReports(reports: Report[]) {
+    return {
+        type: REORDER_REPORTS,
+        payload: {
+            reports,
+        }
     }
 }
 

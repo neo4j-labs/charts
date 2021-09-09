@@ -132,7 +132,7 @@ export const FeedbackForm = (props) => {
 
 
     return (
-        <div className={`fixed bottom-0 right-0 mx-4 -mb-2 p-2 rounded-md shadow-md bg-${colour}-200 text-${colour}-800`} style={{width: '320px'}}>
+        <div className={`fixed bottom-0 mx-4 -mb-2 p-2 rounded-md shadow-md bg-${colour}-200 text-${colour}-800`} style={{width: '320px', right: '60px'}}>
             {view}
         </div>
     )

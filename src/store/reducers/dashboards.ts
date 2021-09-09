@@ -1,7 +1,7 @@
 import { v4 } from 'uuid'
 import { neo4jDesktopGraphAppId } from '../../desktop/client';
 import { saveDashboards } from '../../persistence';
-import { ADD_DASHBOARD, ADD_REPORT, APP_INIT, DELETE_DASHBOARD, DELETE_REPORT, UPDATE_DASHBOARD, UPDATE_REPORT } from '../actions';
+import { ADD_DASHBOARD, ADD_REPORT, APP_INIT, DELETE_DASHBOARD, DELETE_REPORT, REORDER_REPORTS, UPDATE_DASHBOARD, UPDATE_REPORT } from '../actions';
 
 export type Source = 'cypher' | 'query'
 
@@ -44,9 +44,7 @@ export function deleteReport(id: string) {
 const initialState: DashboardsState = { dashboards: [], reports: [], ready: false }
 
 function saveState(state: DashboardsState) {
-    if ( neo4jDesktopGraphAppId ) {
-        saveDashboards(state)
-    }
+    saveDashboards(state)
 
     return state
 }
@@ -119,6 +117,28 @@ export default function dashboardsReducer(state: DashboardsState = initialState,
                 reports: state.reports.filter(d => d.id !== action.payload.id),
             }
             return saveState(state);
+
+        case REORDER_REPORTS:
+            console.log('reorder reports', action.payload);
+
+
+            state = {
+                ...state,
+                reports: state.reports.map(report => {
+                    const found = action.payload.reports.find(item => item.id === report.id)
+
+                    if (found) {
+                        return {
+                            ...report,
+                            order: found.order,
+                        }
+                    }
+
+                    return report
+                })
+            }
+            return saveState(state);
+
     }
 
     return state;

@@ -6,10 +6,10 @@ const GET_PROJECT_FILES = gql`
         getProject(name: $projectId) {
             id
             files {
-            name
-            directory
-            extension
-            downloadToken
+                name
+                directory
+                extension
+                downloadToken
             }
         }
     }
@@ -56,6 +56,14 @@ export function saveFile(filePath: string, contents: string) {
     })
         .catch(e => console.log(e))
         .then(() => {
+            console.log({
+                mutation: ADD_PROJECT_FILE,
+                variables: {
+                    projectId: relateProjectId,
+                    fileUpload: new File([contents], filePath),
+                }
+            });
+
             return client.mutate({
                 mutation: ADD_PROJECT_FILE,
                 variables: {
@@ -96,6 +104,7 @@ export function getProjectFiles(): Promise<ProjectFile[]> {
 }
 
 export function getFileContents(file: string, token: string): Promise<string | void> {
+    console.log(`${relateUrl}/files/${token}/${file}`)
     return fetch(`${relateUrl}/files/${token}/${file}`, {
         headers: {
             'X-API-Token': relateApiToken,

@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, Redirect } from 'react-router-dom'
 import { RootState } from '../store'
-import { addReport, deleteDashboard, updateDashboard } from '../store/actions'
+import { addReport, deleteDashboard, reorderReports, updateDashboard } from '../store/actions'
 import Button from '../components/forms/button'
 import Modal from '../components/modal'
 import Column from '../components/grid/Column'
@@ -12,11 +12,120 @@ import ReportForm from '../components/reports/ReportForm'
 import ColdStart from '../components/ColdStart'
 import Header from '../components/header'
 import { FeedbackForm } from '../components/feedback/FeedbackForm'
+import { Report as ReportInterface } from '../store/reducers/dashboards'
+
+function OrderEditFormItem({ report, index, length, handleUpClick, handleDownClick }) {
+    return (
+        <li className="flex justify-between p-2 mb-2 border-b border-gray-200" key={report.id}>
+            <span className="text-xs text-gray-500 inline-block mr-2">
+                {report.order}
+            </span>
+            <span className="flex-grow">
+                {report.name}
+            </span>
+
+            <button onClick={() => handleUpClick(report)} className={`cursor-pointer outline-none ml-4 ${index > 0 ? 'text-blue-600' : 'text-gray-300'}`}>&uarr;</button>
+            <button onClick={() => handleDownClick(report)} className={`cursor-pointer outline-none ml-4 ${index < length -1 ? 'text-blue-600' : 'text-gray-300'}`}>&darr;</button>
+        </li>
+    )
+}
+
+interface OrderEditFormProps {
+    reports: ReportInterface[],
+    onClose: () => void
+}
+
+function OrderEditForm(props: OrderEditFormProps) {
+    const dispatch = useDispatch()
+    const length = props.reports.length
+    const [ reports, setReports ] = useState<ReportInterface[]>(props.reports)
+
+    const handleUpClick = (report) => {
+        const index = reports.findIndex(row => row.id === report.id)
+
+        const newOrder = report.order - 1
+
+        // Don't move top item
+        if (newOrder == -1 ) return;
+
+        // Extract the current item
+        const extracted = reports.splice(index, 1)[0]
+        extracted.order = newOrder
+
+        // Take a copy of reports and fix the orders
+        const newReports = reports.slice(0)
+            .map(row => ({
+                ...row,
+                order: row.order <= newOrder ? row.order + 1 : row.order
+            }))
+            // ... and add the extracted item back in
+            .concat(extracted)
+
+        // Sort them items by their order
+        newReports.sort((a, b) => a.order < b.order ? -1 : 1)
+
+        // Reset the state
+        setReports(newReports)
+    }
+
+    const handleDownClick = (report) => {
+        const index = reports.findIndex(row => row.id === report.id)
+
+        // zero-indexed - don't add anything to the order
+        const newOrder = report.order
+
+        // Don't move bottom item
+        if (newOrder === length  ) return;
+
+        // Extract the current item
+        const extracted = reports.splice(index, 1)[0]
+        extracted.order = newOrder
+
+        // Take a copy of reports and fix the orders
+        const newReports = reports.slice(0)
+            .map(row => ({
+                ...row,
+                order: row.order > newOrder ? row.order - 1 : row.order
+            }))
+            // ... and add the extracted item back in
+            .concat(extracted)
+
+        // Sort them items by their order
+        newReports.sort((a, b) => a.order < b.order ? -1 : 1)
+
+        // Reset the state
+        setReports(newReports)
+    }
+
+    const handleSaveClick = () => {
+        dispatch(reorderReports(reports))
+        props.onClose()
+    }
+
+    return (
+        <Modal title='Edit Order' onClose={props.onClose}>
+            <ul>
+                <li className="flex">
+                    <strong></strong>
+                </li>
+                {reports.map((report, index) => <OrderEditFormItem index={index} length={length} key={report.id} report={report} handleUpClick={handleUpClick} handleDownClick={handleDownClick} /> )}
+            </ul>
+
+            <div className="mt-4">
+                <Button colour="blue" onClick={handleSaveClick} text="Save Order" />
+                {' '}
+                <Button colour="red" onClick={props.onClose} text="Cancel" />
+            </div>
+        </Modal>
+    )
+}
 
 export default function Dashboard({ match }) {
     const dispatch = useDispatch()
     const dashboard = useSelector((state: RootState) => state.dashboards.dashboards.find(row => row.id === match.params.id))
     const reports = useSelector((state: RootState) => state.dashboards.reports.filter(row => row.dashboard === match.params.id))
+
+    const [ showEditOrder, setShowEditOrder ] = useState<boolean>(true)
 
     // Sort reports by `order`
     reports.sort((a, b) => a.order < b.order ? -1 : 1)
@@ -40,7 +149,6 @@ export default function Dashboard({ match }) {
         dispatch(updateDashboard(match.params.id, name, description))
     }
 
-
     const handleAddReport = (dashboard, name, database, type, source, query, columns) => {
         dispatch( addReport(dashboard, name, database, type, source, query, columns) )
 
@@ -48,6 +156,7 @@ export default function Dashboard({ match }) {
     }
 
     const handleShowAddReportClick = () => setShowAddReport(true)
+    const handleShowEditOrderClick = () => setShowEditOrder(true)
 
     return (
         <div className="flex flex-col w-full">
@@ -58,9 +167,12 @@ export default function Dashboard({ match }) {
                 savedAt={dashboard.savedAt}
                 buttons={[
                     { colour: 'blue', text: 'Add Report', onClick: handleShowAddReportClick, },
+                    { colour: 'blue', text: 'Edit Order', onClick: handleShowEditOrderClick, },
                     { colour: 'red', text: 'Delete Dashboard', onClick: handleDeleteClick, },
                 ]}
             />
+
+            {showEditOrder && <OrderEditForm reports={reports} onClose={() => setShowEditOrder(false)} />}
 
             <div className="container mx-auto pb-16">
                 <div className="px-8 py-8">

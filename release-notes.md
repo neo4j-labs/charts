@@ -1,3 +1,8 @@
+## 0.1.9
+
+- Added Save to Neo4j and Load From Neo4j functionality
+- Added ability to re-order reports in dashboards
+
 ## 0.1.8
 
 - Small bug fixes around crashing reports and help pages.

@@ -44,7 +44,8 @@
     "tailwindcss": "^1.9.6",
     "typescript": "~3.7.2",
     "use-neo4j": "^0.3.0",
-    "uuid": "^8.3.1"
+    "uuid": "^8.3.1",
+    "vue-neo4j": "^0.4.8"
   },
   "scripts": {
     "postpublish": "aws s3 sync --acl public-read dist s3://charts.graphapp.io",

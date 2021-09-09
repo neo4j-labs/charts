@@ -10,6 +10,8 @@ import { useSelector } from 'react-redux';
 import { getInitialState } from './persistence';
 import { RootState } from './store';
 import Help from './views/Help';
+import ExportForm from './components/export/ExportForm';
+import Footer from './components/Footer';
 
 function App() {
   const ready = useSelector((state: RootState) => state.dashboards.ready)
@@ -45,8 +47,10 @@ function App() {
             <Route path="/help" component={Help} />
             <Route path="*" component={DashboardList} />
           </Switch>
+        <Footer />
         </div>
       </Router>
+      <ExportForm />
     </div>
   )
 }
