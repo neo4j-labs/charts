@@ -125,7 +125,7 @@ export default function Dashboard({ match }) {
     const dashboard = useSelector((state: RootState) => state.dashboards.dashboards.find(row => row.id === match.params.id))
     const reports = useSelector((state: RootState) => state.dashboards.reports.filter(row => row.dashboard === match.params.id))
 
-    const [ showEditOrder, setShowEditOrder ] = useState<boolean>(true)
+    const [ showEditOrder, setShowEditOrder ] = useState<boolean>(false)
 
     // Sort reports by `order`
     reports.sort((a, b) => a.order < b.order ? -1 : 1)
