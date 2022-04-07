@@ -37,7 +37,7 @@ export default function ExportToNeo4j(props: ExportToNeo4jProps) {
         else {
             setConfirmation(undefined)
         }
-    }, [ loading ])
+    }, [ loading, error, started ])
 
     return (
         <Modal title="Save to Neo4j" onClose={props.onClose}>

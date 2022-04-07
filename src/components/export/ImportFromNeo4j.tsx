@@ -1,5 +1,4 @@
-import { dispatch } from 'd3';
-import React, { useState } from 'react';
+import React from 'react';
 import { useDispatch } from 'react-redux';
 import { useReadCypher } from 'use-neo4j';
 import { init } from '../../store/actions';
@@ -11,7 +10,7 @@ interface ImportFromNeo4jProps {
 }
 
 export default function ImportFromNeo4j(props: ImportFromNeo4jProps) {
-    const { loading, first, error } = useReadCypher(`MATCH (c:_Charts) RETURN c`)
+    const { loading, first } = useReadCypher(`MATCH (c:_Charts) RETURN c`)
     const dispatch = useDispatch()
 
     if (loading) {

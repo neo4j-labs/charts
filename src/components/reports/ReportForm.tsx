@@ -11,7 +11,7 @@ export default function ReportForm({ dashboard, report, submitText, onSubmit }) 
 
     const [name, setName] = useState<string>(report.name || '');
     const [columns, setColumns] = useState<number | string>(report.columns || 1);
-    const [rows, setRows] = useState<number | string>(report.rows || 1);
+    // const [rows, setRows] = useState<number | string>(report.rows || 1);
     const [type, setType] = useState<string>(report.type || reportTypes[0].value);
     const [source, setSource] = useState<string>(report.source || reportSources[0].value);
     const [query, setQuery] = useState<string>(report.query || '');
@@ -19,12 +19,12 @@ export default function ReportForm({ dashboard, report, submitText, onSubmit }) 
 
     const handleSubmit = () => {
         // Validate Query Type
-        if (name === '' || query === '' || (source === 'query' && !queries.find(q => q.id === query)) || !parseInt(rows.toString()) || !parseInt(columns.toString())) {
+        if (name === '' || query === '' || (source === 'query' && !queries.find(q => q.id === query)) /*|| !parseInt(rows.toString())*/ || !parseInt(columns.toString())) {
             console.log('invalid payload');
             return;
         }
 
-        onSubmit(dashboard, name, database, type, source, query, columns, rows);
+        onSubmit(dashboard, name, database, type, source, query, columns); // rows
     };
 
     return (

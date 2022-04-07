@@ -35,8 +35,8 @@ export default function ExportForm() {
             {showLoadFromNeo4jForm && <ImportFromNeo4j onClose={hideLoadFromNeo4j} />}
 
             {showMenu && <div className={`fixed text-sm border border-${colour}-200 bottom-0 right-0 mr-4 p-1 bg-white text-${colour}-800 rounded-md`} style={{marginBottom: '64px'}}>
-                <a className="cursor-pointer block p-2 text-blue-600 text-right" onClick={() => showLoadFromNeo4j()}>Load From Neo4j</a>
-                <a className="cursor-pointer block p-2 text-blue-600 text-right" onClick={() => showSaveToNeo4j()}>Save to Neo4j</a>
+                <button className="cursor-pointer block p-2 text-blue-600 text-right" onClick={() => showLoadFromNeo4j()}>Load From Neo4j</button>
+                <button className="cursor-pointer block p-2 text-blue-600 text-right" onClick={() => showSaveToNeo4j()}>Save to Neo4j</button>
                 {/* <a className="cursor-pointer block p-2 text-blue-600 text-right" onClick={() => showSaveJson()}>Export Dashboard as JSON</a> */}
 
                 <div style={{position: 'absolute', bottom: -8, right: '18px', width: 0, height: 0, borderLeft: '8px solid transparent', borderRight: '8px solid transparent', borderTop: '8px solid #e2e8f0'}}></div>

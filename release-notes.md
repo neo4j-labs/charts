@@ -1,3 +1,7 @@
+## 0.2.0
+
+- Upgraded `use-neo4j` which now supports automatic login using URL Search Parameters
+
 ## 0.1.9
 
 - Added Save to Neo4j and Load From Neo4j functionality
