@@ -1,4 +1,4 @@
-## 0.2.0
+## 1.1.0
 
 - Upgraded `use-neo4j` which now supports automatic login using URL Search Parameters
 
